@@ -546,3 +546,13 @@ func NewDeHServiceV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts
 	sc, err := initClientOpts(client, eo, "deh")
 	return sc, err
 }
+
+func NewCCEV3(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
+	sc, err := initClientOpts(client, eo, "compute")
+	sc.Endpoint = strings.Replace(sc.Endpoint, "ecs", "cce", 1)
+	sc.Endpoint = strings.Replace(sc.Endpoint, "v2", "api/v3/projects", 1)
+	sc.Endpoint = strings.Replace(sc.Endpoint, "myhwclouds", "myhuaweicloud", 1)
+	sc.ResourceBase = sc.Endpoint
+	sc.Type = "cce"
+	return sc, err
+}
