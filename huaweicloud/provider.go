@@ -167,10 +167,29 @@ func Provider() terraform.ResourceProvider {
 				DefaultFunc: schema.EnvDefaultFunc("OS_CLOUD", ""),
 				Description: descriptions["cloud"],
 			},
+
+			"agency_name": &schema.Schema{
+				Type:        schema.TypeString,
+				Optional:    true,
+				DefaultFunc: schema.EnvDefaultFunc("OS_AGENCY_NAME", ""),
+				Description: descriptions["agency_name"],
+			},
+
+			"agency_domain_name": &schema.Schema{
+				Type:        schema.TypeString,
+				Optional:    true,
+				DefaultFunc: schema.EnvDefaultFunc("OS_AGENCY_DOMAIN_NAME", ""),
+				Description: descriptions["agency_domain_name"],
+			},
+			"delegated_project": &schema.Schema{
+				Type:        schema.TypeString,
+				Optional:    true,
+				DefaultFunc: schema.EnvDefaultFunc("OS_DELEGATED_PROJECT", ""),
+				Description: descriptions["delegated_project"],
+			},
 		},
 
 		DataSourcesMap: map[string]*schema.Resource{
-			"huaweicloud_images_image_v2":        dataSourceImagesImageV2(),
 			"huaweicloud_networking_network_v2":  dataSourceNetworkingNetworkV2(),
 			"huaweicloud_networking_subnet_v2":   dataSourceNetworkingSubnetV2(),
 			"huaweicloud_networking_secgroup_v2": dataSourceNetworkingSecGroupV2(),
@@ -178,6 +197,10 @@ func Provider() terraform.ResourceProvider {
 			"huaweicloud_kms_key_v1":             dataSourceKmsKeyV1(),
 			"huaweicloud_kms_data_key_v1":        dataSourceKmsDataKeyV1(),
 			"huaweicloud_rds_flavors_v1":         dataSourceRdsFlavorV1(),
+			"huaweicloud_sfs_file_system_v2":     dataSourceSFSFileSystemV2(),
+			"huaweicloud_rts_stack_v1":           dataSourceRTSStackV1(),
+			"huaweicloud_rts_stack_resource_v1":  dataSourceRTSStackResourcesV1(),
+			"huaweicloud_iam_role_v3":            dataSourceIAMRoleV3(),
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
@@ -194,7 +217,6 @@ func Provider() terraform.ResourceProvider {
 			"huaweicloud_fw_firewall_group_v2":            resourceFWFirewallGroupV2(),
 			"huaweicloud_fw_policy_v2":                    resourceFWPolicyV2(),
 			"huaweicloud_fw_rule_v2":                      resourceFWRuleV2(),
-			"huaweicloud_images_image_v2":                 resourceImagesImageV2(),
 			"huaweicloud_kms_key_v1":                      resourceKmsKeyV1(),
 			"huaweicloud_elb_loadbalancer":                resourceELBLoadBalancer(),
 			"huaweicloud_elb_listener":                    resourceELBListener(),
@@ -222,8 +244,10 @@ func Provider() terraform.ResourceProvider {
 			"huaweicloud_rds_instance_v1":                 resourceRdsInstance(),
 			"huaweicloud_nat_gateway_v2":                  resourceNatGatewayV2(),
 			"huaweicloud_nat_snat_rule_v2":                resourceNatSnatRuleV2(),
-			"huaweicloud_ces_alarmrule":                   resourceAlarmRule(),
 			"huaweicloud_vpc_eip_v1":                      resourceVpcEIPV1(),
+			"huaweicloud_sfs_file_system_v2":              resourceSFSFileSystemV2(),
+			"huaweicloud_rts_stack_v1":                    resourceRTSStackV1(),
+			"huaweicloud_iam_agency_v3":                   resourceIAMAgencyV3(),
 		},
 
 		ConfigureFunc: configureProvider,
@@ -273,6 +297,12 @@ func init() {
 			"service (Octavia) instead of the Networking service (Neutron).",
 
 		"cloud": "An entry in a `clouds.yaml` file to use.",
+
+		"agency_name": "The name of agency",
+
+		"agency_domain_name": "The name of domain who created the agency (Identity v3).",
+
+		"delegated_project": "The name of delegated project (Identity v3).",
 	}
 }
 
@@ -298,6 +328,9 @@ func configureProvider(d *schema.ResourceData) (interface{}, error) {
 		Username:         d.Get("user_name").(string),
 		UserID:           d.Get("user_id").(string),
 		useOctavia:       d.Get("use_octavia").(bool),
+		AgencyName:       d.Get("agency_name").(string),
+		AgencyDomainName: d.Get("agency_domain_name").(string),
+		DelegatedProject: d.Get("delegated_project").(string),
 	}
 
 	if err := config.LoadAndValidate(); err != nil {

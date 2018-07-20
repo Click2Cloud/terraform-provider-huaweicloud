@@ -3,12 +3,12 @@ package huaweicloud
 import (
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/huaweicloud/golangsdk"
 	"github.com/huaweicloud/golangsdk/openstack/kms/v1/keys"
-	"time"
 )
 
 const WaitingForEnableState = "1"
@@ -67,10 +67,6 @@ func resourceKmsKeyV1() *schema.Resource {
 				Computed: true,
 			},
 			"expiration_time": &schema.Schema{
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-			"origin": &schema.Schema{
 				Type:     schema.TypeString,
 				Computed: true,
 			},
@@ -169,7 +165,6 @@ func resourceKmsKeyV1Read(d *schema.ResourceData, meta interface{}) error {
 	d.Set("is_enabled", v.KeyState == EnabledState)
 	d.Set("default_key_flag", v.DefaultKeyFlag)
 	d.Set("expiration_time", v.ExpirationTime)
-	d.Set("origin", v.Origin)
 
 	return nil
 }

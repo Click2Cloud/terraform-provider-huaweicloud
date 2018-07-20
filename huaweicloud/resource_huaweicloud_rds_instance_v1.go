@@ -3,13 +3,12 @@ package huaweicloud
 import (
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/huaweicloud/golangsdk"
 	"github.com/huaweicloud/golangsdk/openstack/rds/v1/instances"
-	"strings"
-	"time"
 )
 
 func resourceRdsInstance() *schema.Resource {
@@ -376,14 +375,6 @@ func resourceInstanceRead(d *schema.ResourceData, meta interface{}) error {
 
 	log.Printf("[DEBUG] Retrieved instance %s: %#v", instanceID, instance)
 
-	if instance.Name != "" {
-		nameList := strings.Split(instance.Name, "-"+instance.DataStore.Type)
-		log.Printf("[DEBUG] Retrieved nameList %#v", nameList)
-		if len(nameList) > 0 {
-			d.Set("name", nameList[0])
-		}
-	}
-
 	d.Set("hostname", instance.HostName)
 	d.Set("type", instance.Type)
 	d.Set("region", instance.Region)
@@ -436,17 +427,6 @@ func resourceInstanceRead(d *schema.ResourceData, meta interface{}) error {
 		return fmt.Errorf(
 			"[DEBUG] Error saving datastore to Rds instance (%s): %s", d.Id(), err)
 	}
-
-	//haList := make([]map[string]interface{}, 0, 1)
-	//ha := map[string]interface{}{
-	//	"enable":          instance.Ha.Enable,
-	//	"replicationmode": instance.Ha.ReplicationMode,
-	//}
-	//haList = append(haList, ha)
-	//if err := d.Set("ha", haList); err != nil {
-	//	return fmt.Errorf(
-	//		"[DEBUG] Error saving haSet to Rds instance (%s): %s", d.Id(), err)
-	//}
 
 	d.Set("updated", instance.Updated)
 	d.Set("created", instance.Created)
@@ -514,10 +494,6 @@ func InstanceStateFlavorUpdateRefreshFunc(client *golangsdk.ServiceClient, insta
 			}
 			return nil, "", err
 		}
-		//log.Printf("[DEBUG] Updating instance.Flavor : %+v", instance.Flavor)
-		//if instance.Flavor.Id == flavorID {
-		//    return instance, "FLAVOR_UPDATED", nil
-		//}
 
 		return instance, instance.Status, nil
 	}

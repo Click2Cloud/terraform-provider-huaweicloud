@@ -45,6 +45,9 @@ type Config struct {
 	Username         string
 	UserID           string
 	useOctavia       bool
+	AgencyName       string
+	AgencyDomainName string
+	DelegatedProject string
 
 	OsClient *gophercloud.ProviderClient
 	HwClient *golangsdk.ProviderClient
@@ -69,12 +72,14 @@ func (c *Config) LoadAndValidate() error {
 	if !validEndpoint {
 		return fmt.Errorf("Invalid endpoint type provided")
 	}
-	err := newopenstackClient(c)
+	// newhwClient(c) must be invoked at here, because newopenstackClient
+	// will use c.HwClient
+	err := newhwClient(c)
 	if err != nil {
 		return err
 	}
 
-	return newhwClient(c)
+	return newopenstackClient(c)
 
 }
 
@@ -150,18 +155,24 @@ func newopenstackClient(c *Config) error {
 
 	// If using Swift Authentication, there's no need to validate authentication normally.
 	if !c.Swauth {
-		err = openstack.Authenticate(client, ao)
-		if err != nil {
-			return err
+		client.TokenID = c.HwClient.TokenID
+		client.EndpointLocator = func(opts gophercloud.EndpointOpts) (string, error) {
+			opts1 := golangsdk.EndpointOpts{
+				Type:         opts.Type,
+				Name:         opts.Name,
+				Region:       opts.Region,
+				Availability: golangsdk.Availability(string(opts.Availability)),
+			}
+			return c.HwClient.EndpointLocator(opts1)
 		}
 	}
 
 	c.OsClient = client
 	//fmt.Printf("[DEBUG] Region: %s.\n", c.Region)
 
-	// Don't get AWS session unless we need it for Accesskey, SecretKey.
+	// Don't get session unless we need it for Accesskey, SecretKey.
 	if c.AccessKey != "" && c.SecretKey != "" {
-		// Setup AWS/S3 client/config information for Swift S3 buckets
+		// Setup S3 client/config information for Swift S3 buckets
 		log.Println("[INFO] Building Swift S3 auth structure")
 		creds, err := GetCredentials(c)
 		if err != nil {
@@ -171,39 +182,35 @@ func newopenstackClient(c *Config) error {
 		// error, and we can present it nicely to the user
 		cp, err := creds.Get()
 		if err != nil {
-			if awsErr, ok := err.(awserr.Error); ok && awsErr.Code() == "NoCredentialProviders" {
-				return fmt.Errorf(`No valid credential sources found for Swift S3 Provider.
-																																																																																																																																																																																																																																																																																																																																																																																																														  Please see https://terraform.io/docs/providers/aws/index.html for more information on
-																																																																																																																																																																																																																																																																																																																																																																																																														  																																																																																																																																																																																																							    providing credentials for the S3 Provider`)
+			if sErr, ok := err.(awserr.Error); ok && sErr.Code() == "NoCredentialProviders" {
+				return fmt.Errorf("No valid credential sources found for S3 Provider.")
 			}
 
-			return fmt.Errorf("Error loading credentials for Swift S3 Provider: %s", err)
+			return fmt.Errorf("Error loading credentials for S3 Provider: %s", err)
 		}
 
-		log.Printf("[INFO] Swift S3 Auth provider used: %q", cp.ProviderName)
+		log.Printf("[INFO] S3 Auth provider used: %q", cp.ProviderName)
 
-		awsConfig := &aws.Config{
+		sConfig := &aws.Config{
 			Credentials: creds,
 			Region:      aws.String(c.Region),
-			//MaxRetries:       aws.Int(c.MaxRetries),
-			HTTPClient: cleanhttp.DefaultClient(),
-			//S3ForcePathStyle: aws.Bool(c.S3ForcePathStyle),
+			HTTPClient:  cleanhttp.DefaultClient(),
 		}
 
 		if osDebug {
-			awsConfig.LogLevel = aws.LogLevel(aws.LogDebugWithHTTPBody | aws.LogDebugWithRequestRetries | aws.LogDebugWithRequestErrors)
-			awsConfig.Logger = awsLogger{}
+			sConfig.LogLevel = aws.LogLevel(aws.LogDebugWithHTTPBody | aws.LogDebugWithRequestRetries | aws.LogDebugWithRequestErrors)
+			sConfig.Logger = sLogger{}
 		}
 
 		if c.Insecure {
-			transport := awsConfig.HTTPClient.Transport.(*http.Transport)
+			transport := sConfig.HTTPClient.Transport.(*http.Transport)
 			transport.TLSClientConfig = &tls.Config{
 				InsecureSkipVerify: true,
 			}
 		}
 
-		// Set up base session for AWS/Swift S3
-		c.s3sess, err = session.NewSession(awsConfig)
+		// Set up base session for S3
+		c.s3sess, err = session.NewSession(sConfig)
 		if err != nil {
 			return errwrap.Wrapf("Error creating Swift S3 session: {{err}}", err)
 		}
@@ -223,6 +230,9 @@ func newhwClient(c *Config) error {
 		TokenID:          c.Token,
 		Username:         c.Username,
 		UserID:           c.UserID,
+		AgencyName:       c.AgencyName,
+		AgencyDomainName: c.AgencyDomainName,
+		DelegatedProject: c.DelegatedProject,
 	}
 
 	client, err := huaweisdk.NewClient(ao.IdentityEndpoint)
@@ -291,14 +301,13 @@ func newhwClient(c *Config) error {
 	}
 
 	c.HwClient = client
-	//fmt.Printf("[DEBUG] Region: %s.\n", c.Region)
 
 	return nil
 }
 
-type awsLogger struct{}
+type sLogger struct{}
 
-func (l awsLogger) Log(args ...interface{}) {
+func (l sLogger) Log(args ...interface{}) {
 	tokens := make([]string, 0, len(args))
 	for _, arg := range args {
 		if token, ok := arg.(string); ok {
@@ -330,9 +339,10 @@ func (c *Config) computeS3conn(region string) (*s3.S3, error) {
 	})
 	// Bit of a hack, seems the only way to compute this.
 	endpoint := strings.Replace(client.Endpoint, "//vpc", "//obs", 1)
+	endpoint = strings.Replace(endpoint, "myhuaweicloud", "myhwclouds", 1)
 
-	awsS3Sess := c.s3sess.Copy(&aws.Config{Endpoint: aws.String(endpoint)})
-	s3conn := s3.New(awsS3Sess)
+	S3Sess := c.s3sess.Copy(&aws.Config{Endpoint: aws.String(endpoint)})
+	s3conn := s3.New(S3Sess)
 
 	return s3conn, err
 }
@@ -360,7 +370,6 @@ func (c *Config) computeV2Client(region string) (*gophercloud.ServiceClient, err
 
 func (c *Config) dnsV2Client(region string) (*golangsdk.ServiceClient, error) {
 	return huaweisdk.NewDNSV2(c.HwClient, golangsdk.EndpointOpts{
-		//Region:       c.determineRegion(region),
 		Region:       "",
 		Availability: c.getHwEndpointType(),
 	})
@@ -472,6 +481,10 @@ func (c *Config) loadCESClient(region string) (*golangsdk.ServiceClient, error) 
 	})
 }
 
+func (c *Config) loadIAMV3Client(region string) (*golangsdk.ServiceClient, error) {
+	return huaweisdk.NewIdentityV3(c.HwClient, golangsdk.EndpointOpts{})
+}
+
 func (c *Config) getEndpointType() gophercloud.Availability {
 	if c.EndpointType == "internal" || c.EndpointType == "internalURL" {
 		return gophercloud.AvailabilityInternal
@@ -490,4 +503,18 @@ func (c *Config) getHwEndpointType() golangsdk.Availability {
 		return golangsdk.AvailabilityAdmin
 	}
 	return golangsdk.AvailabilityPublic
+}
+
+func (c *Config) sfsV2Client(region string) (*golangsdk.ServiceClient, error) {
+	return huaweisdk.NewHwSFSV2(c.HwClient, golangsdk.EndpointOpts{
+		Region:       c.determineRegion(region),
+		Availability: c.getHwEndpointType(),
+	})
+}
+
+func (c *Config) orchestrationV1Client(region string) (*golangsdk.ServiceClient, error) {
+	return huaweisdk.NewOrchestrationV1(c.HwClient, golangsdk.EndpointOpts{
+		Region:       c.determineRegion(region),
+		Availability: c.getHwEndpointType(),
+	})
 }

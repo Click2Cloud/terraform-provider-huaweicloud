@@ -154,7 +154,7 @@ func (lrt *LogRoundTripper) formatJSON(raw []byte) string {
 	return string(pretty)
 }
 
-// FirewallGroup is an OpenTelekomCloud firewall group.
+// FirewallGroup is an HuaweiCloud firewall group.
 type FirewallGroup struct {
 	firewall_groups.FirewallGroup
 	routerinsertion.FirewallGroupExt

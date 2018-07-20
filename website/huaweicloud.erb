@@ -13,9 +13,6 @@
         <li<%= sidebar_current("docs-huaweicloud-datasource") %>>
           <a href="#">Data Sources</a>
           <ul class="nav nav-visible">
-            <li<%= sidebar_current("docs-huaweicloud-datasource-images-image-v2") %>>
-              <a href="/docs/providers/huaweicloud/d/images_image_v2.html">huaweicloud_images_image_v2</a>
-            </li>
             <li<%= sidebar_current("docs-huaweicloud-datasource-networking-network-v2") %>>
               <a href="/docs/providers/huaweicloud/d/networking_network_v2.html">huaweicloud_networking_network_v2</a>
             </li>
@@ -36,6 +33,15 @@
             </li>
             <li<%= sidebar_current("docs-huaweicloud-datasource-s3-bucket-object") %>>
               <a href="/docs/providers/huaweicloud/d/s3_bucket_object.html">huaweicloud_s3_bucket_object</a>
+            </li>
+            <li<%= sidebar_current("docs-huaweicloud-datasource-sfs-file-system-v2") %>>
+              <a href="/docs/providers/huaweicloud/d/sfs_file_system_v2.html">huaweicloud_sfs_file_system_v2</a>
+            </li>
+            <li<%= sidebar_current("docs-huaweicloud-datasource-rts-stack-v1") %>>
+              <a href="/docs/providers/huaweicloud/d/rts_stack_v1.html">huaweicloud_rts_stack_v1</a>
+            </li>
+            <li<%= sidebar_current("docs-huaweicloud-datasource-rts-stack-resource-v1") %>>
+              <a href="/docs/providers/huaweicloud/d/rts_stack_resource_v1.html">huaweicloud_rts_stack_resource_v1</a>
             </li>
           </ul>
         </li>
@@ -99,15 +105,6 @@
             </li>
             <li<%= sidebar_current("docs-huaweicloud-resource-fw-rule-v2") %>>
               <a href="/docs/providers/huaweicloud/r/fw_rule_v2.html">huaweicloud_fw_rule_v2</a>
-            </li>
-          </ul>
-        </li>
-
-        <li<%= sidebar_current("docs-huaweicloud-resource-images") %>>
-          <a href="#">Images Resources</a>
-          <ul class="nav nav-visible">
-            <li<%= sidebar_current("docs-huaweicloud-resource-images-image-v2") %>>
-              <a href="/docs/providers/huaweicloud/r/images_image_v2.html">huaweicloud_images_image_v2</a>
             </li>
           </ul>
         </li>
@@ -241,15 +238,6 @@
           </ul>
         </li>
 
-        <li<%= sidebar_current("docs-huaweicloud-resource-ces") %>>
-          <a href="#">Cloud Eye Service Resources</a>
-          <ul class="nav nav-visible">
-            <li<%= sidebar_current("docs-huaweicloud-resource-ces-alarmrule") %>>
-              <a href="/docs/providers/huaweicloud/r/ces_alarm_rule.html">huaweicloud_ces_alarmrule</a>
-            </li>
-          </ul>
-        </li>
-
         <li<%= sidebar_current("docs-huaweicloud-resource-eip") %>>
           <a href="#">EIP Resources</a>
           <ul class="nav nav-visible">
@@ -259,12 +247,32 @@
           </ul>
         </li>
 
-      </ul>
-    </div>
-  <% end %>
+        <li<%= sidebar_current("docs-huaweicloud-resource-sfs") %>>
+          <a href="#">SFS Resources</a>
+          <ul class="nav nav-visible">
+            <li<%= sidebar_current("docs-huaweicloud-resource-sfs-file-system-v2") %>>
+              <a href="/docs/providers/huaweicloud/r/sfs_file_system_v2.html">huaweicloud_sfs_file_system_v2</a>
+            </li>
+          </ul>
+        </li>
 
-  <%= yield %>
-  <% end %>
+        <li<%= sidebar_current("docs-huaweicloud-resource-rts-stack") %>>
+          <a href="#">RTS Resources</a>
+          <ul class="nav nav-visible">
+            <li<%= sidebar_current("docs-huaweicloud-resource-rts-stack-v1") %>>
+              <a href="/docs/providers/huaweicloud/r/rts_stack_v1.html">huaweicloud_rts_stack_v1</a>
+            </li>
+          </ul>
+        </li>
+
+        <li<%= sidebar_current("docs-huaweicloud-resource-iam") %>>
+          <a href="#">IAM Resources</a>
+          <ul class="nav nav-visible">
+            <li<%= sidebar_current("docs-huaweicloud-resource-iam-agency-v3") %>>
+              <a href="/docs/providers/huaweicloud/r/iam_agency_v3.html">huaweicloud_iam_agency_v3</a>
+            </li>
+          </ul>
+        </li>
 
       </ul>
     </div>

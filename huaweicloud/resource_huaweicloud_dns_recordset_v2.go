@@ -164,7 +164,7 @@ func resourceDNSRecordSetV2Read(d *schema.ResourceData, meta interface{}) error 
 	d.Set("ttl", n.TTL)
 	d.Set("type", n.Type)
 	if err := d.Set("records", n.Records); err != nil {
-		return fmt.Errorf("[DEBUG] Error saving records to state for OpenTelekomCloud DNS record set (%s): %s", d.Id(), err)
+		return fmt.Errorf("[DEBUG] Error saving records to state for HuaweiCloud DNS record set (%s): %s", d.Id(), err)
 	}
 	d.Set("region", GetRegion(d, config))
 	d.Set("zone_id", zoneID)
@@ -312,7 +312,7 @@ func resourceValidateDescription(v interface{}, k string) (ws []string, errors [
 	return
 }
 
-var recordSetTypes = [7]string{"A", "AAAA", "MX", "CNAME", "TXT", "NS", "SRV"}
+var recordSetTypes = [8]string{"A", "AAAA", "MX", "CNAME", "TXT", "NS", "SRV", "PTR"}
 
 func resourceRecordsetValidateType(v interface{}, k string) (ws []string, errors []error) {
 	value := v.(string)

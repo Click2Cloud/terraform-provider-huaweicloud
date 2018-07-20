@@ -6,28 +6,23 @@ import (
 	"github.com/hashicorp/terraform/helper/resource"
 )
 
-func TestAccImagesImageV2_importBasic(t *testing.T) {
-	resourceName := "huaweicloud_images_image_v2.image_1"
+// PASS
+func TestAccRTSStackV1_importBasic(t *testing.T) {
+	resourceName := "huaweicloud_rts_stack_v1.stack_1"
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckImagesImageV2Destroy,
+		CheckDestroy: testAccCheckRTSStackV1Destroy,
 		Steps: []resource.TestStep{
 			resource.TestStep{
-				Config: testAccImagesImageV2_basic,
+				Config: testAccRTSStackV1_basic,
 			},
 
 			resource.TestStep{
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
-				ImportStateVerifyIgnore: []string{
-					"region",
-					"local_file_path",
-					"image_cache_path",
-					"image_source_url",
-				},
 			},
 		},
 	})

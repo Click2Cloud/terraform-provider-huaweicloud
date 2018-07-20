@@ -3,10 +3,10 @@ package huaweicloud
 import (
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/huaweicloud/golangsdk/openstack/kms/v1/keys"
-	"time"
 )
 
 func dataSourceKmsDataKeyV1() *schema.Resource {
@@ -17,17 +17,14 @@ func dataSourceKmsDataKeyV1() *schema.Resource {
 			"key_id": &schema.Schema{
 				Type:     schema.TypeString,
 				Required: true,
-				ForceNew: true,
 			},
 			"encryption_context": &schema.Schema{
 				Type:     schema.TypeString,
 				Optional: true,
-				ForceNew: true,
 			},
 			"datakey_length": &schema.Schema{
 				Type:     schema.TypeString,
 				Required: true,
-				ForceNew: true,
 			},
 			"plain_text": &schema.Schema{
 				Type:     schema.TypeString,
@@ -37,7 +34,6 @@ func dataSourceKmsDataKeyV1() *schema.Resource {
 			"cipher_text": &schema.Schema{
 				Type:     schema.TypeString,
 				Optional: true,
-				ForceNew: true,
 			},
 		},
 	}

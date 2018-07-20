@@ -2,15 +2,14 @@ package huaweicloud
 
 import (
 	"fmt"
+	"log"
 	"testing"
 
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
 	"github.com/huaweicloud/golangsdk/openstack/networking/v2/extensions/elb/backendecs"
-	"log"
 )
 
-// PASS with diff
 func TestAccELBBackend_basic(t *testing.T) {
 	var backend backendecs.Backend
 

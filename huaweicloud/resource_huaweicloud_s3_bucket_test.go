@@ -1,12 +1,13 @@
 package huaweicloud
 
 import (
-	//"bytes"
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"reflect"
 	"regexp"
 	"strconv"
+	"strings"
 	"testing"
 	"text/template"
 
@@ -14,27 +15,17 @@ import (
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
 
-	"strings"
-
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awserr"
-	//"github.com/aws/aws-sdk-go/service/ec2"
-	"bytes"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-// PASS
 func TestAccS3Bucket_basic(t *testing.T) {
 	rInt := acctest.RandInt()
-	//arnRegexp := regexp.MustCompile("^arn:aws:s3:::")
 
 	resource.Test(t, resource.TestCase{
-		PreCheck: func() { testAccPreCheck(t) },
-		/*
-			IDRefreshName:   "huaweicloud_s3_bucket.bucket",
-			IDRefreshIgnore: []string{"force_destroy"},
-		*/
+		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckS3BucketDestroy,
 		Steps: []resource.TestStep{
@@ -42,14 +33,10 @@ func TestAccS3Bucket_basic(t *testing.T) {
 				Config: testAccS3BucketConfig(rInt),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckS3BucketExists("huaweicloud_s3_bucket.bucket"),
-					/*resource.TestCheckResourceAttr(
-					"huaweicloud_s3_bucket.bucket", "hosted_zone_id", HostedZoneIDForRegion("us-west-2")), */
 					resource.TestCheckResourceAttr(
 						"huaweicloud_s3_bucket.bucket", "region", OS_REGION_NAME),
 					resource.TestCheckNoResourceAttr(
 						"huaweicloud_s3_bucket.bucket", "website_endpoint"),
-					/*resource.TestMatchResourceAttr(
-					"huaweicloud_s3_bucket.bucket", "arn", arnRegexp), */
 					resource.TestCheckResourceAttr(
 						"huaweicloud_s3_bucket.bucket", "bucket", testAccBucketName(rInt)),
 					resource.TestCheckResourceAttr(
@@ -60,21 +47,19 @@ func TestAccS3Bucket_basic(t *testing.T) {
 	})
 }
 
-func TestAccAWSS3MultiBucket_withTags(t *testing.T) {
+func TestAccS3MultiBucket_withTags(t *testing.T) {
 	rInt := acctest.RandInt()
 	resource.Test(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
 		Providers: testAccProviders,
-		//CheckDestroy: testAccCheckAWSS3BucketDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccAWSS3MultiBucketConfigWithTags(rInt),
+				Config: testAccS3MultiBucketConfigWithTags(rInt),
 			},
 		},
 	})
 }
 
-// PASS
 func TestAccS3Bucket_namePrefix(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -93,7 +78,6 @@ func TestAccS3Bucket_namePrefix(t *testing.T) {
 	})
 }
 
-// PASS
 func TestAccS3Bucket_generatedName(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -110,7 +94,6 @@ func TestAccS3Bucket_generatedName(t *testing.T) {
 	})
 }
 
-// PASS
 func TestAccS3Bucket_region(t *testing.T) {
 	rInt := acctest.RandInt()
 
@@ -130,7 +113,6 @@ func TestAccS3Bucket_region(t *testing.T) {
 	})
 }
 
-// PASS
 func TestAccS3Bucket_Policy(t *testing.T) {
 	rInt := acctest.RandInt()
 
@@ -167,7 +149,6 @@ func TestAccS3Bucket_Policy(t *testing.T) {
 	})
 }
 
-// PASS
 func TestAccS3Bucket_UpdateAcl(t *testing.T) {
 	ri := acctest.RandInt()
 	preConfig := fmt.Sprintf(testAccS3BucketConfigWithAcl, ri)
@@ -198,7 +179,6 @@ func TestAccS3Bucket_UpdateAcl(t *testing.T) {
 	})
 }
 
-// PASS
 func TestAccS3Bucket_Website_Simple(t *testing.T) {
 	rInt := acctest.RandInt()
 	resource.Test(t, resource.TestCase{
@@ -240,7 +220,6 @@ func TestAccS3Bucket_Website_Simple(t *testing.T) {
 	})
 }
 
-// PASS
 func TestAccS3Bucket_WebsiteRedirect(t *testing.T) {
 	rInt := acctest.RandInt()
 	resource.Test(t, resource.TestCase{
@@ -282,7 +261,6 @@ func TestAccS3Bucket_WebsiteRedirect(t *testing.T) {
 	})
 }
 
-// PASS
 func TestAccS3Bucket_WebsiteRoutingRules(t *testing.T) {
 	rInt := acctest.RandInt()
 	resource.Test(t, resource.TestCase{
@@ -328,10 +306,9 @@ func TestAccS3Bucket_WebsiteRoutingRules(t *testing.T) {
 	})
 }
 
-// Test TestAccAWSS3Bucket_shouldFailNotFound is designed to fail with a "plan
+// Test TestAccS3Bucket_shouldFailNotFound is designed to fail with a "plan
 // not empty" error in Terraform, to check against regresssions.
 // See https://github.com/hashicorp/terraform/pull/2925
-// PASS
 func TestAccS3Bucket_shouldFailNotFound(t *testing.T) {
 	rInt := acctest.RandInt()
 	resource.Test(t, resource.TestCase{
@@ -351,7 +328,6 @@ func TestAccS3Bucket_shouldFailNotFound(t *testing.T) {
 	})
 }
 
-// PASS
 func TestAccS3Bucket_Versioning(t *testing.T) {
 	rInt := acctest.RandInt()
 	resource.Test(t, resource.TestCase{
@@ -387,7 +363,6 @@ func TestAccS3Bucket_Versioning(t *testing.T) {
 	})
 }
 
-// PASS
 func TestAccS3Bucket_Cors(t *testing.T) {
 	rInt := acctest.RandInt()
 
@@ -471,27 +446,6 @@ func TestAccS3Bucket_Cors(t *testing.T) {
 	})
 }
 
-// PASS
-func TestAccS3Bucket_Logging(t *testing.T) {
-	rInt := acctest.RandInt()
-	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckS3BucketDestroy,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccS3BucketConfigWithLogging(rInt),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckS3BucketExists("huaweicloud_s3_bucket.bucket"),
-					testAccCheckS3BucketLogging(
-						"huaweicloud_s3_bucket.bucket", "huaweicloud_s3_bucket.log_bucket", "log/"),
-				),
-			},
-		},
-	})
-}
-
-// PASS
 func TestAccS3Bucket_Lifecycle(t *testing.T) {
 	rInt := acctest.RandInt()
 	resource.Test(t, resource.TestCase{
@@ -633,7 +587,6 @@ func TestS3BucketName(t *testing.T) {
 
 func testAccCheckS3BucketDestroy(s *terraform.State) error {
 	// UNDONE: Why instance check?
-	//return testAccCheckInstanceDestroyWithProvider(s, testAccProvider)
 	return nil
 }
 
@@ -943,7 +896,6 @@ func testAccCheckS3BucketLogging(n, b, p string) resource.TestCheckFunc {
 }
 
 // These need a bit of randomness as the name can only be used once globally
-// within AWS
 func testAccBucketName(randInt int) string {
 	return fmt.Sprintf("tf-test-bucket-%d", randInt)
 }
@@ -969,7 +921,7 @@ resource "huaweicloud_s3_bucket" "bucket" {
 `, randInt)
 }
 
-func testAccAWSS3MultiBucketConfigWithTags(randInt int) string {
+func testAccS3MultiBucketConfigWithTags(randInt int) string {
 	t := template.Must(template.New("t1").
 		Parse(`
 resource "huaweicloud_s3_bucket" "bucket1" {
