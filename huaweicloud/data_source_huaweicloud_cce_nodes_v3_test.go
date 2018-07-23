@@ -14,9 +14,6 @@ func TestAccCCENodesV3DataSource_basic(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			resource.TestStep{
-				Config: testAccCCENodeV3DataSource_node,
-			},
-			resource.TestStep{
 				Config: testAccCCENodeV3DataSource_basic,
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCCENodeV3DataSourceID("data.huaweicloud_cce_node_v3.nodes"),
@@ -43,29 +40,43 @@ func testAccCheckCCENodeV3DataSourceID(n string) resource.TestCheckFunc {
 	}
 }
 
-var testAccCCENodeV3DataSource_node = fmt.Sprintf(`
+var testAccCCENodeV3DataSource_basic = fmt.Sprintf(`
+resource "huaweicloud_cce_cluster_v3" "cluster_1" {
+  name = "huaweicloud-cce"
+  cluster_type="VirtualMachine"
+  flavor="cce.s1.small"
+  cluster_version = "v1.7.3-r10"
+  vpc_id="%s"
+  subnet_id="%s"
+  container_network_type="overlay_l2"
+}
+
 resource "huaweicloud_cce_node_v3" "node_1" {
-cluster_id = "%s"
-  name = "test-node2"
-  flavor="s1.medium"
+cluster_id = "${huaweicloud_cce_cluster_v3.cluster_1.id}"
+  name = "test-node1"
+ flavor="s1.medium"
+  iptype="5_bgp"
+  billing_mode=0
   az= "%s"
   sshkey="KeyPair-c2c"
-  iptype="5_bgp"    
   root_volume = {
     size= 40,
     volumetype= "SATA"
   }
+  chargemode="traffic"
+  sharetype= "PER"
+  bandwidth_size= 100,
   data_volumes = [
     {
       size= 100,
       volumetype= "SATA"
-    }]
- 
-}`, OS_CLUSTER_ID, OS_AVAILABILITY_ZONE)
-
-var testAccCCENodeV3DataSource_basic = fmt.Sprintf(`
+    },
+  ]
+}
 data "huaweicloud_cce_node_v3" "nodes" {
-		cluster_id ="%s"
+		cluster_id = "${huaweicloud_cce_cluster_v3.cluster_1.id}"
 		name = "${huaweicloud_cce_node_v3.node_1.name}"
 }
-`, OS_CLUSTER_ID)
+`, OS_VPC_ID, OS_SUBNET_ID, OS_AVAILABILITY_ZONE)
+
+

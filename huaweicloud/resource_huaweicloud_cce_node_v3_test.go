@@ -21,7 +21,7 @@ func TestAccCCENodesV3_basic(t *testing.T) {
 			resource.TestStep{
 				Config: testAccCCENodeV3_basic,
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCCENodeV3Exists("huaweicloud_cce_node_v3.node_1", &node),
+					testAccCheckCCENodeV3Exists("huaweicloud_cce_node_v3.node_1","huaweicloud_cce_cluster_v3.cluster_1", &node),
 					resource.TestCheckResourceAttr(
 						"huaweicloud_cce_node_v3.node_1", "name", "test-node1"),
 					resource.TestCheckResourceAttr(
@@ -50,7 +50,7 @@ func TestAccCCENodesV3_timeout(t *testing.T) {
 			resource.TestStep{
 				Config: testAccCCENodeV3_timeout,
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckCCENodeV3Exists("huaweicloud_cce_node_v3.node_1", &node),
+					testAccCheckCCENodeV3Exists("huaweicloud_cce_node_v3.node_1","huaweicloud_cce_cluster_v3.cluster_1", &node),
 				),
 			},
 		},
@@ -64,29 +64,43 @@ func testAccCheckCCENodeV3Destroy(s *terraform.State) error {
 		return fmt.Errorf("Error creating HuaweiCloud CCE client: %s", err)
 	}
 
+	var clusterId string
+
 	for _, rs := range s.RootModule().Resources {
+		if rs.Type == "huaweicloud_cce_cluster_v3" {
+			clusterId =rs.Primary.ID
+		}
+
 		if rs.Type != "huaweicloud_cce_node_v3" {
 			continue
 		}
 
-		_, err := nodes.Get(cceClient, OS_CLUSTER_ID, rs.Primary.ID).Extract()
+		_, err := nodes.Get(cceClient, clusterId, rs.Primary.ID).Extract()
 		if err == nil {
 			return fmt.Errorf("Node still exists")
 		}
 	}
 
+
 	return nil
 }
 
-func testAccCheckCCENodeV3Exists(n string, node *nodes.Nodes) resource.TestCheckFunc {
+func testAccCheckCCENodeV3Exists(n string, cluster string, node *nodes.Nodes) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
 			return fmt.Errorf("Not found: %s", n)
 		}
+		c, ok := s.RootModule().Resources[cluster]
+		if !ok {
+			return fmt.Errorf("Cluster not found: %s", c)
+		}
 
 		if rs.Primary.ID == "" {
 			return fmt.Errorf("No ID is set")
+		}
+		if c.Primary.ID == "" {
+			return fmt.Errorf("Cluster id is not set")
 		}
 
 		config := testAccProvider.Meta().(*Config)
@@ -95,7 +109,7 @@ func testAccCheckCCENodeV3Exists(n string, node *nodes.Nodes) resource.TestCheck
 			return fmt.Errorf("Error creating HuaweiCloud CCE client: %s", err)
 		}
 
-		found, err := nodes.Get(cceClient, OS_CLUSTER_ID, rs.Primary.ID).Extract()
+		found, err := nodes.Get(cceClient, c.Primary.ID, rs.Primary.ID).Extract()
 		if err != nil {
 			return err
 		}
