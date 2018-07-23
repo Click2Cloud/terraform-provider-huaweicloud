@@ -100,7 +100,7 @@ func testAccCheckCCENodeV3Exists(n string, node *nodes.Nodes) resource.TestCheck
 			return err
 		}
 
-		if found.Metadata.Uid != rs.Primary.ID {
+		if found.Metadata.Id != rs.Primary.ID {
 			return fmt.Errorf("Node not found")
 		}
 
