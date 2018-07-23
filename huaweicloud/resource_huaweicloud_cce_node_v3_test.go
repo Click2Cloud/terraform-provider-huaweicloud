@@ -111,8 +111,18 @@ func testAccCheckCCENodeV3Exists(n string, node *nodes.Nodes) resource.TestCheck
 }
 
 var testAccCCENodeV3_basic = fmt.Sprintf(`
+resource "huaweicloud_cce_cluster_v3" "cluster_1" {
+  name = "huaweicloud-cce"
+  cluster_type="VirtualMachine"
+  flavor="cce.s1.small"
+  cluster_version = "v1.7.3-r10"
+  vpc_id="%s"
+  subnet_id="%s"
+  container_network_type="overlay_l2"
+}
+
 resource "huaweicloud_cce_node_v3" "node_1" {
-cluster_id = "%s"
+cluster_id = "${huaweicloud_cce_cluster_v3.cluster_1.id}"
   name = "test-node1"
  flavor="s1.medium"
   iptype="5_bgp"
@@ -132,11 +142,21 @@ cluster_id = "%s"
       volumetype= "SATA"
     },
   ]
-}`, OS_CLUSTER_ID, OS_AVAILABILITY_ZONE)
+}`, OS_VPC_ID, OS_SUBNET_ID, OS_AVAILABILITY_ZONE)
 
 var testAccCCENodeV3_update = fmt.Sprintf(`
+resource "huaweicloud_cce_cluster_v3" "cluster_1" {
+  name = "huaweicloud-cce"
+  cluster_type="VirtualMachine"
+  flavor="cce.s1.small"
+  cluster_version = "v1.7.3-r10"
+  vpc_id="%s"
+  subnet_id="%s"
+  container_network_type="overlay_l2"
+}
+
 resource "huaweicloud_cce_node_v3" "node_1" {
-cluster_id = "%s"
+cluster_id = "${huaweicloud_cce_cluster_v3.cluster_1.id}"
   name = "test-node2"
   flavor="s1.medium"
   iptype="5_bgp"
@@ -156,11 +176,21 @@ cluster_id = "%s"
       volumetype= "SATA"
     },
   ]
-}`, OS_CLUSTER_ID, OS_AVAILABILITY_ZONE)
+}`, OS_VPC_ID, OS_SUBNET_ID, OS_AVAILABILITY_ZONE)
 
 var testAccCCENodeV3_timeout = fmt.Sprintf(`
+resource "huaweicloud_cce_cluster_v3" "cluster_1" {
+  name = "huaweicloud-cce"
+  cluster_type="VirtualMachine"
+  flavor="cce.s1.small"
+  cluster_version = "v1.7.3-r10"
+  vpc_id="%s"
+  subnet_id="%s"
+  container_network_type="overlay_l2"
+}
+
 resource "huaweicloud_cce_node_v3" "node_1" {
-  cluster_id = "%s"
+  cluster_id = "${huaweicloud_cce_cluster_v3.cluster_1.id}"
   name = "test-node2"
   flavor="s1.medium"
   iptype="5_bgp"
@@ -185,4 +215,4 @@ create = "5m"
 delete = "5m"
 } 
 }
-`, OS_CLUSTER_ID, OS_AVAILABILITY_ZONE)
+`, OS_VPC_ID, OS_SUBNET_ID, OS_AVAILABILITY_ZONE)
