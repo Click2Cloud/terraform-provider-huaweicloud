@@ -14,7 +14,7 @@ func TestAccCCENodesV3_basic(t *testing.T) {
 	var node nodes.Nodes
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:     func() { testAccPreCheckCCENode(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckCCENodeV3Destroy,
 		Steps: []resource.TestStep{
@@ -142,7 +142,7 @@ cluster_id = "${huaweicloud_cce_cluster_v3.cluster_1.id}"
   iptype="5_bgp"
   billing_mode=0
   az= "%s"
-  sshkey="KeyPair-c2c"
+  sshkey="%s"
   root_volume = {
     size= 40,
     volumetype= "SATA"
@@ -156,7 +156,7 @@ cluster_id = "${huaweicloud_cce_cluster_v3.cluster_1.id}"
       volumetype= "SATA"
     },
   ]
-}`, OS_VPC_ID, OS_SUBNET_ID, OS_AVAILABILITY_ZONE)
+}`, OS_VPC_ID, OS_SUBNET_ID, OS_AVAILABILITY_ZONE, OS_SSH_KEY)
 
 var testAccCCENodeV3_update = fmt.Sprintf(`
 resource "huaweicloud_cce_cluster_v3" "cluster_1" {
@@ -176,7 +176,7 @@ cluster_id = "${huaweicloud_cce_cluster_v3.cluster_1.id}"
   iptype="5_bgp"
   billing_mode=0
   az= "%s"
-  sshkey="KeyPair-c2c"
+  sshkey="%s"
   root_volume = {
     size= 40,
     volumetype= "SATA"
@@ -190,7 +190,7 @@ cluster_id = "${huaweicloud_cce_cluster_v3.cluster_1.id}"
       volumetype= "SATA"
     },
   ]
-}`, OS_VPC_ID, OS_SUBNET_ID, OS_AVAILABILITY_ZONE)
+}`, OS_VPC_ID, OS_SUBNET_ID, OS_AVAILABILITY_ZONE, OS_SSH_KEY)
 
 var testAccCCENodeV3_timeout = fmt.Sprintf(`
 resource "huaweicloud_cce_cluster_v3" "cluster_1" {
@@ -210,7 +210,7 @@ resource "huaweicloud_cce_node_v3" "node_1" {
   iptype="5_bgp"
   billing_mode=0
   az= "%s"
-  sshkey="KeyPair-c2c"
+  sshkey="%s"
   root_volume = {
     size= 40,
     volumetype= "SATA"
@@ -229,4 +229,4 @@ create = "5m"
 delete = "5m"
 } 
 }
-`, OS_VPC_ID, OS_SUBNET_ID, OS_AVAILABILITY_ZONE)
+`, OS_VPC_ID, OS_SUBNET_ID, OS_AVAILABILITY_ZONE, OS_SSH_KEY)

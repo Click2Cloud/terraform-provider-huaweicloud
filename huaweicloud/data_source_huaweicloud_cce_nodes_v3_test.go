@@ -10,7 +10,7 @@ import (
 
 func TestAccCCENodesV3DataSource_basic(t *testing.T) {
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:  func() { testAccPreCheckCCENode(t) },
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			resource.TestStep{
@@ -58,7 +58,7 @@ cluster_id = "${huaweicloud_cce_cluster_v3.cluster_1.id}"
   iptype="5_bgp"
   billing_mode=0
   az= "%s"
-  sshkey="KeyPair-c2c"
+  sshkey="%s"
   root_volume = {
     size= 40,
     volumetype= "SATA"
@@ -77,6 +77,6 @@ data "huaweicloud_cce_node_v3" "nodes" {
 		cluster_id = "${huaweicloud_cce_cluster_v3.cluster_1.id}"
 		name = "${huaweicloud_cce_node_v3.node_1.name}"
 }
-`, OS_VPC_ID, OS_SUBNET_ID, OS_AVAILABILITY_ZONE)
+`, OS_VPC_ID, OS_SUBNET_ID, OS_AVAILABILITY_ZONE , OS_SSH_KEY)
 
 
