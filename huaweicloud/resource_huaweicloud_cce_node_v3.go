@@ -166,9 +166,7 @@ func resourceCCENodeAnnotationsV2(d *schema.ResourceData) map[string]string {
 	return m
 }
 func resourceCCEDataVolume(d *schema.ResourceData) []nodes.VolumeSpec {
-	log.Printf("[DEBUG] dataVolumes: %+v", d.Get("data_volumes"))
 	volumeRaw := d.Get("data_volumes").(*schema.Set).List()
-	log.Printf("[DEBUG] dataVolumessss: %+v", volumeRaw)
 	volumes := make([]nodes.VolumeSpec, len(volumeRaw))
 	for i, raw := range volumeRaw {
 		rawMap := raw.(map[string]interface{})
@@ -188,7 +186,6 @@ func resourceCCERootVolume(d *schema.ResourceData) nodes.VolumeSpec {
 		nics.VolumeType = nicsRaw[0].(map[string]interface{})["volumetype"].(string)
 		nics.ExtendParam = nicsRaw[0].(map[string]interface{})["extend_param"].(string)
 	}
-	log.Printf("[DEBUG] nics: %+v", nics)
 	return nics
 }
 func resourceCCEEipIDs(d *schema.ResourceData) []string {
@@ -237,10 +234,8 @@ func resourceCCENodeV3Create(d *schema.ResourceData, meta interface{}) error {
 			ExtendParam: d.Get("extend_param").(string),
 		},
 	}
-	log.Printf("[DEBUG] Value of CreateOpts: %+v", createOpts)
 
 	clusterid := d.Get("cluster_id").(string)
-	log.Printf("[DEBUG] Waiting for Cluster (%s) to become available", clusterid)
 	stateCluster := &resource.StateChangeConf{
 		Target:     []string{"Available"},
 		Refresh:    waitForClusterAvailable(nodeClient, clusterid),
@@ -268,8 +263,6 @@ func resourceCCENodeV3Create(d *schema.ResourceData, meta interface{}) error {
 		return fmt.Errorf("Error fetching HuaweiCloud Job Details: %s", err)
 	}
 	nodeid := job.Spec.SubJobs[0].Spec.SubJobs[0].Spec.ResourceID
-	log.Printf("[DEBUG] NodeID from get job: %#v", nodeid)
-
 	log.Printf("[DEBUG] Waiting for CCE Node (%s) to become available", s.Metadata.Name)
 	stateConf := &resource.StateChangeConf{
 		Pending:    []string{"Creating"},
@@ -287,7 +280,6 @@ func resourceCCENodeV3Create(d *schema.ResourceData, meta interface{}) error {
 	d.Set("chargemode", s.Spec.PublicIP.Eip.Bandwidth.ChargeMode)
 	d.Set("bandwidth_size", s.Spec.PublicIP.Eip.Bandwidth.Size)
 	d.Set("sharetype", s.Spec.PublicIP.Eip.Bandwidth.ShareType)
-	log.Printf("[DEBUG] Created Node %s: %#v", s.Metadata.Id, s)
 	return resourceCCENodeV3Read(d, meta)
 }
 
@@ -309,7 +301,6 @@ func resourceCCENodeV3Read(d *schema.ResourceData, meta interface{}) error {
 		return fmt.Errorf("Error retrieving HuaweiCloud Node: %s", err)
 	}
 
-	log.Printf("[DEBUG] Retrieved Node %s: %#v", d.Id(), s)
 	d.Set("name", s.Metadata.Name)
 	d.Set("labels", s.Metadata.Labels)
 	d.Set("annotations", s.Metadata.Annotations)
@@ -364,10 +355,7 @@ func resourceCCENodeV3Update(d *schema.ResourceData, meta interface{}) error {
 		updateOpts.Metadata.Name = d.Get("name").(string)
 	}
 
-	log.Printf("[DEBUG] Updating Node %s with options: %+v", d.Id(), updateOpts)
-
 	clusterid := d.Get("cluster_id").(string)
-	log.Printf("[DEBUG] clusterid: %+v", clusterid)
 	_, err = nodes.Update(nodeClient, clusterid, d.Id(), updateOpts).Extract()
 	if err != nil {
 		return fmt.Errorf("Error updating HuaweiCloud  Node: %s", err)
@@ -378,13 +366,11 @@ func resourceCCENodeV3Update(d *schema.ResourceData, meta interface{}) error {
 
 func resourceCCENodeV3Delete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
-	log.Printf("[DEBUG] config Value: %+v", config)
 	nodeClient, err := config.cceV3Client(GetRegion(d, config))
 	if err != nil {
 		return fmt.Errorf("Error creating HuaweiCloud CCE client: %s", err)
 	}
 	clusterid := d.Get("cluster_id").(string)
-	log.Printf("[DEBUG] clusterid: %+v", clusterid)
 	err = nodes.Delete(nodeClient, clusterid, d.Id()).ExtractErr()
 	if err != nil {
 		return fmt.Errorf("Error deleting HuaweiCloud CCE Cluster: %s", err)
@@ -428,7 +414,6 @@ func waitForCceNodeDelete(cceClient *golangsdk.ServiceClient, clusterId, nodeId 
 
 		r, err := nodes.Get(cceClient, clusterId, nodeId).Extract()
 
-		log.Printf("[DEBUG] Value after extract: %#v", r)
 		if err != nil {
 			if _, ok := err.(golangsdk.ErrDefault404); ok {
 				log.Printf("[DEBUG] Successfully deleted HuaweiCloud CCE Node %s", nodeId)

@@ -142,10 +142,8 @@ func resourceCCEClusterV3Create(d *schema.ResourceData, meta interface{}) error 
 	config := meta.(*Config)
 	cceClient, err := config.cceV3Client(GetRegion(d, config))
 
-	log.Printf("[DEBUG] Value of CCE Client: %#v", cceClient)
-
 	if err != nil {
-		return fmt.Errorf("Error creating HuaweiCloud cluster Client: %s", err)
+		return fmt.Errorf("Unable to create HuaweiCloud CCE client : %s", err)
 	}
 
 	createOpts := clusters.CreateOpts{
@@ -169,15 +167,11 @@ func resourceCCEClusterV3Create(d *schema.ResourceData, meta interface{}) error 
 		},
 	}
 
-	log.Printf("[DEBUG] Create Options: %#v", createOpts)
-
 	create, err := clusters.Create(cceClient, createOpts).Extract()
 
 	if err != nil {
 		return fmt.Errorf("Error creating HuaweiCloud Cluster: %s", err)
 	}
-
-	log.Printf("[INFO] cluster ID: %s", create.Metadata.Id)
 
 	log.Printf("[DEBUG] Waiting for HuaweiCloud CCE cluster (%s) to become available", create.Metadata.Id)
 
@@ -214,8 +208,6 @@ func resourceCCEClusterV3Read(d *schema.ResourceData, meta interface{}) error {
 		return fmt.Errorf("Error retrieving HuaweiCloud CCE: %s", err)
 	}
 
-	log.Printf("[DEBUG] Retrieved cluster %s: %+v", d.Id(), n)
-
 	d.Set("id", n.Metadata.Id)
 	d.Set("name", n.Metadata.Name)
 	d.Set("status", n.Status.Phase)
@@ -246,9 +238,6 @@ func resourceCCEClusterV3Update(d *schema.ResourceData, meta interface{}) error 
 	if d.HasChange("description") {
 		updateOpts.Spec.Description = d.Get("description").(string)
 	}
-
-	log.Printf("[DEBUG] Updating CCE %s with options: %+v", d.Id(), updateOpts)
-
 	_, err = clusters.Update(cceClient, d.Id(), updateOpts).Extract()
 
 	if err != nil {
@@ -259,8 +248,6 @@ func resourceCCEClusterV3Update(d *schema.ResourceData, meta interface{}) error 
 }
 
 func resourceCCEClusterV3Delete(d *schema.ResourceData, meta interface{}) error {
-	log.Printf("[DEBUG] Destroy CCE cluster: %s", d.Id())
-
 	config := meta.(*Config)
 	cceClient, err := config.cceV3Client(GetRegion(d, config))
 	if err != nil {
@@ -309,7 +296,6 @@ func waitForCCEClusterDelete(cceClient *golangsdk.ServiceClient, clusterId strin
 
 		r, err := clusters.Get(cceClient, clusterId).Extract()
 
-		log.Printf("[DEBUG] Value after extract: %#v", r)
 		if err != nil {
 			if _, ok := err.(golangsdk.ErrDefault404); ok {
 				log.Printf("[DEBUG] Successfully deleted HuaweiCloud CCE cluster %s", clusterId)

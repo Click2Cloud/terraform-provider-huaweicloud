@@ -128,9 +128,8 @@ func dataSourceCceNodesV3() *schema.Resource {
 func dataSourceCceNodesV3Read(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 	cceClient, err := config.cceV3Client(GetRegion(d, config))
-
 	if err != nil {
-		return fmt.Errorf("Unable to get Nodes: %s", err)
+		return fmt.Errorf("Unable to create HuaweiCloud CCE client : %s", err)
 	}
 
 	listOpts := nodes.ListOpts{

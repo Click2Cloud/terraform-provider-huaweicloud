@@ -94,6 +94,10 @@ func dataSourceCCEClusterV3Read(d *schema.ResourceData, meta interface{}) error 
 	config := meta.(*Config)
 	cceClient, err := config.cceV3Client(GetRegion(d, config))
 
+	if err != nil {
+		return fmt.Errorf("Unable to create HuaweiCloud CCE client : %s", err)
+	}
+
 	listOpts := clusters.ListOpts{
 		ID:    d.Get("id").(string),
 		Name:  d.Get("name").(string),
