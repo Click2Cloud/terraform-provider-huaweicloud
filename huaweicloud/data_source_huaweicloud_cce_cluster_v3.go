@@ -106,7 +106,7 @@ func dataSourceCCEClusterV3Read(d *schema.ResourceData, meta interface{}) error 
 		VpcID: d.Get("vpc_id").(string),
 	}
 
-	refinedClusters, err := clusters.List(cceClient,listOpts)
+	refinedClusters, err := clusters.List(cceClient, listOpts)
 	log.Printf("[DEBUG] Value of allClusters: %#v", refinedClusters)
 	if err != nil {
 		return fmt.Errorf("Unable to retrieve clusters: %s", err)
