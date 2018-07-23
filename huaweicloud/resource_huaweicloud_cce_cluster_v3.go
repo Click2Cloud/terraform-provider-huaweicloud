@@ -61,6 +61,7 @@ func resourceCCEClusterV3() *schema.Resource {
 			"cluster_version": &schema.Schema{
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed:true,
 				ForceNew: true,
 			},
 			"cluster_type": &schema.Schema{
@@ -76,6 +77,7 @@ func resourceCCEClusterV3() *schema.Resource {
 			"billing_mode": &schema.Schema{
 				Type:     schema.TypeInt,
 				Optional: true,
+				Computed:true,
 				ForceNew: true,
 			},
 			"vpc_id": &schema.Schema{
@@ -91,6 +93,7 @@ func resourceCCEClusterV3() *schema.Resource {
 			"highway_subnet_id": &schema.Schema{
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed:true,
 				ForceNew: true,
 			},
 			"extend_param": &schema.Schema{
@@ -106,6 +109,7 @@ func resourceCCEClusterV3() *schema.Resource {
 			"container_network_cidr": &schema.Schema{
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed:true,
 				ForceNew: true,
 			},
 			"status": &schema.Schema{
