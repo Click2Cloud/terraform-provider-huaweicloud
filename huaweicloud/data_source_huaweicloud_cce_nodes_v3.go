@@ -149,8 +149,7 @@ func dataSourceCceNodesV3Read(d *schema.ResourceData, meta interface{}) error {
 		listOpts.Phase = v.(string)
 	}
 
-	refinedNodes, err := nodes.List(cceClient, d.Get("cluster_id").(string)).ExtractNode(listOpts)
-	log.Printf("[DEBUG] Value of all Nodes: %#v", refinedNodes)
+	refinedNodes, err := nodes.List(cceClient, d.Get("cluster_id").(string),listOpts)
 
 	if err != nil {
 		return fmt.Errorf("Unable to retrieve Nodes: %s", err)
