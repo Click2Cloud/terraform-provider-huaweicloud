@@ -1,8 +1,8 @@
 package huaweicloud
 
 import (
-	"testing"
 	"github.com/hashicorp/terraform/helper/resource"
+	"testing"
 )
 
 func TestAccCCEClusterV3_importBasic(t *testing.T) {

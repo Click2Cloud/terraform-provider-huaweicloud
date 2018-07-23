@@ -26,7 +26,7 @@ func TestAccCCENodesV3_basic(t *testing.T) {
 						"huaweicloud_cce_node_v3.node_1", "name", "test-node1"),
 					resource.TestCheckResourceAttr(
 						"huaweicloud_cce_node_v3.node_1", "flavor", "s1.medium"),
-					),
+				),
 			},
 			resource.TestStep{
 				Config: testAccCCENodeV3_update,
@@ -38,7 +38,6 @@ func TestAccCCENodesV3_basic(t *testing.T) {
 		},
 	})
 }
-
 
 func TestAccCCENodesV3_timeout(t *testing.T) {
 	var node nodes.Nodes
@@ -70,7 +69,7 @@ func testAccCheckCCENodeV3Destroy(s *terraform.State) error {
 			continue
 		}
 
-		_, err := nodes.Get(cceClient,OS_CLUSTER_ID, rs.Primary.ID).Extract()
+		_, err := nodes.Get(cceClient, OS_CLUSTER_ID, rs.Primary.ID).Extract()
 		if err == nil {
 			return fmt.Errorf("Node still exists")
 		}
@@ -96,7 +95,7 @@ func testAccCheckCCENodeV3Exists(n string, node *nodes.Nodes) resource.TestCheck
 			return fmt.Errorf("Error creating HuaweiCloud CCE client: %s", err)
 		}
 
-		found, err := nodes.Get(cceClient,OS_CLUSTER_ID, rs.Primary.ID).Extract()
+		found, err := nodes.Get(cceClient, OS_CLUSTER_ID, rs.Primary.ID).Extract()
 		if err != nil {
 			return err
 		}
@@ -133,7 +132,7 @@ cluster_id = "%s"
       volumetype= "SATA"
     },
   ]
-}`, OS_CLUSTER_ID,OS_AVAILABILITY_ZONE )
+}`, OS_CLUSTER_ID, OS_AVAILABILITY_ZONE)
 
 var testAccCCENodeV3_update = fmt.Sprintf(`
 resource "huaweicloud_cce_node_v3" "node_1" {
@@ -157,7 +156,7 @@ cluster_id = "%s"
       volumetype= "SATA"
     },
   ]
-}`, OS_CLUSTER_ID,OS_AVAILABILITY_ZONE)
+}`, OS_CLUSTER_ID, OS_AVAILABILITY_ZONE)
 
 var testAccCCENodeV3_timeout = fmt.Sprintf(`
 resource "huaweicloud_cce_node_v3" "node_1" {
@@ -186,6 +185,4 @@ create = "5m"
 delete = "5m"
 } 
 }
-`, OS_CLUSTER_ID,OS_AVAILABILITY_ZONE)
-
-
+`, OS_CLUSTER_ID, OS_AVAILABILITY_ZONE)

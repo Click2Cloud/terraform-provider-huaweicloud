@@ -124,7 +124,6 @@ func dataSourceCceNodesV3() *schema.Resource {
 	}
 }
 
-
 func dataSourceCceNodesV3Read(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 	cceClient, err := config.cceV3Client(GetRegion(d, config))
@@ -133,7 +132,7 @@ func dataSourceCceNodesV3Read(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	listOpts := nodes.ListOpts{
-		Uid:    d.Get("node_id").(string),
+		Uid:   d.Get("node_id").(string),
 		Name:  d.Get("name").(string),
 		Phase: d.Get("status").(string),
 	}
@@ -178,8 +177,6 @@ func dataSourceCceNodesV3Read(d *schema.ResourceData, meta interface{}) error {
 		}
 		v = append(v, mapping)
 	}
-
-
 
 	pids := Node.Spec.PublicIP.Ids
 	PublicIDs := make([]string, len(pids))

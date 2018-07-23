@@ -47,7 +47,6 @@ func TestAccCCEClusterV3_basic(t *testing.T) {
 	})
 }
 
-
 func TestAccCCEClusterV3_timeout(t *testing.T) {
 	var cluster clusters.Clusters
 
