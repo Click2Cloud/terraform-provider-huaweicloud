@@ -20,17 +20,22 @@ type ListOpts struct {
 }
 
 // List returns collection of clusters.
-func List(client *golangsdk.ServiceClient) (r ListResult) {
-
+func List(client *golangsdk.ServiceClient, opts ListOpts) ([]Clusters, error) {
+	var r ListResult
 	_, r.Err = client.Get(rootURL(client), &r.Body, &golangsdk.RequestOpts{
 		OkCodes:     []int{200},
 		MoreHeaders: RequestOpts.MoreHeaders, JSONBody: nil,
 	})
 
-	return
+	allClusters, err := r.ExtractClusters()
+	if err != nil {
+		return nil, err
+	}
+
+	return FilterClusters(allClusters, opts), nil
 }
 
-func FilterClusters(clusters []Clusters, opts ListOpts) ([]Clusters, error) {
+func FilterClusters(clusters []Clusters, opts ListOpts) []Clusters {
 
 	var refinedClusters []Clusters
 	var matched bool
@@ -70,7 +75,7 @@ func FilterClusters(clusters []Clusters, opts ListOpts) ([]Clusters, error) {
 		refinedClusters = clusters
 	}
 
-	return refinedClusters, nil
+	return refinedClusters
 }
 
 type FilterStruct struct {

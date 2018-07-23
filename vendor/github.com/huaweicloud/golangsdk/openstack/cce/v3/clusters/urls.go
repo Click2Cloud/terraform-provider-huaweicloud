@@ -3,13 +3,13 @@ package clusters
 import "github.com/huaweicloud/golangsdk"
 
 const (
-	rootpath = "clusters"
+	rootPath = "clusters"
 )
 
 func rootURL(client *golangsdk.ServiceClient) string {
-	return client.ServiceURL(rootpath)
+	return client.ServiceURL(rootPath)
 }
 
 func resourceURL(c *golangsdk.ServiceClient, id string) string {
-	return c.ServiceURL(rootpath, id)
+	return c.ServiceURL(rootPath, id)
 }

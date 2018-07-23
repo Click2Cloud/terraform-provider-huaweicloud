@@ -5,7 +5,7 @@ CCE service.
 Example to List Clusters
 
 	listOpts:=clusters.ListOpts{}
-	allClusters,err:=clusters.List(client).ExtractCluster(listOpts)
+	allClusters,err:=clusters.List(client,listOpts)
 	if err != nil {
 		panic(err)
 	}

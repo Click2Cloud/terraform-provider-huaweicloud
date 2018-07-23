@@ -18,15 +18,23 @@ type ListOpts struct {
 }
 
 // List returns collection of nodes.
-func List(client *golangsdk.ServiceClient, clusterID string) (r ListResult) {
+func List(client *golangsdk.ServiceClient, clusterID string, opts ListOpts) ([]Nodes, error) {
+	var r ListResult
 	_, r.Err = client.Get(rootURL(client, clusterID), &r.Body, &golangsdk.RequestOpts{
 		OkCodes:     []int{200},
 		MoreHeaders: RequestOpts.MoreHeaders, JSONBody: nil,
 	})
-	return r
+
+	allNodes, err := r.ExtractNode()
+
+	if err != nil {
+		return nil, err
+	}
+
+	return FilterNodes(allNodes, opts), nil
 }
 
-func FilterNodes(nodes []Nodes, opts ListOpts) ([]Nodes, error) {
+func FilterNodes(nodes []Nodes, opts ListOpts) []Nodes {
 
 	var refinedNodes []Nodes
 	var matched bool
@@ -60,7 +68,7 @@ func FilterNodes(nodes []Nodes, opts ListOpts) ([]Nodes, error) {
 	} else {
 		refinedNodes = nodes
 	}
-	return refinedNodes, nil
+	return refinedNodes
 }
 
 func GetStructNestedField(v *Nodes, field string, structDriller []string) string {

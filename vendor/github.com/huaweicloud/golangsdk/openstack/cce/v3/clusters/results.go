@@ -119,13 +119,15 @@ func (r commonResult) Extract() (*Clusters, error) {
 
 // ExtractCluster is a function that accepts a ListOpts struct, which allows you to filter and sort
 // the returned collection for greater efficiency.
-func (r commonResult) ExtractCluster(opts ListOpts) ([]Clusters, error) {
+func (r commonResult) ExtractClusters() ([]Clusters, error) {
 	var s ListCluster
 	err := r.ExtractInto(&s)
 	if err != nil {
 		return nil, err
 	}
-	return FilterClusters(s.Clusters, opts)
+
+	return s.Clusters, nil
+
 }
 
 // CreateResult represents the result of a create operation. Call its Extract
