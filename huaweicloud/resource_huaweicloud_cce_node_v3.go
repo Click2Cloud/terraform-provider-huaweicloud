@@ -334,7 +334,6 @@ func resourceCCENodeV3Read(d *schema.ResourceData, meta interface{}) error {
 		return fmt.Errorf("[DEBUG] Error saving root Volume to state for HuaweiCloud Node (%s): %s", d.Id(), err)
 	}
 
-	d.Set("extend_param", s.Spec.ExtendParam)
 	d.Set("eip_ids", s.Spec.PublicIP.Ids)
 	d.Set("eip_count", s.Spec.PublicIP.Count)
 	d.Set("region", GetRegion(d, config))
