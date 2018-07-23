@@ -17,7 +17,7 @@ func TestAccCCENodesV3DataSource_basic(t *testing.T) {
 				Config: testAccCCENodeV3DataSource_basic,
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCCENodeV3DataSourceID("data.huaweicloud_cce_node_v3.nodes"),
-					resource.TestCheckResourceAttr("data.huaweicloud_cce_node_v3.nodes", "name", "test-node2"),
+					resource.TestCheckResourceAttr("data.huaweicloud_cce_node_v3.nodes", "name", "test-node"),
 					resource.TestCheckResourceAttr("data.huaweicloud_cce_node_v3.nodes", "flavor", "s1.medium"),
 				),
 			},
@@ -53,8 +53,8 @@ resource "huaweicloud_cce_cluster_v3" "cluster_1" {
 
 resource "huaweicloud_cce_node_v3" "node_1" {
 cluster_id = "${huaweicloud_cce_cluster_v3.cluster_1.id}"
-  name = "test-node1"
- flavor="s1.medium"
+  name = "test-node"
+  flavor="s1.medium"
   iptype="5_bgp"
   billing_mode=0
   az= "%s"

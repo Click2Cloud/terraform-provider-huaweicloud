@@ -23,7 +23,7 @@ func TestAccCCENodesV3_basic(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCCENodeV3Exists("huaweicloud_cce_node_v3.node_1","huaweicloud_cce_cluster_v3.cluster_1", &node),
 					resource.TestCheckResourceAttr(
-						"huaweicloud_cce_node_v3.node_1", "name", "test-node1"),
+						"huaweicloud_cce_node_v3.node_1", "name", "test-node"),
 					resource.TestCheckResourceAttr(
 						"huaweicloud_cce_node_v3.node_1", "flavor", "s1.medium"),
 				),
@@ -137,7 +137,7 @@ resource "huaweicloud_cce_cluster_v3" "cluster_1" {
 
 resource "huaweicloud_cce_node_v3" "node_1" {
 cluster_id = "${huaweicloud_cce_cluster_v3.cluster_1.id}"
-  name = "test-node1"
+  name = "test-node"
  flavor="s1.medium"
   iptype="5_bgp"
   billing_mode=0
