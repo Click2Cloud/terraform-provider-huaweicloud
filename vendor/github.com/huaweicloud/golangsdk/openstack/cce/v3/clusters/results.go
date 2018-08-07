@@ -106,6 +106,63 @@ type Endpoints struct {
 	Type string `json:"type"`
 }
 
+type Certificate struct {
+	//Resource type. This parameter must be set to Config.
+	Kind string `json:"kind"`
+	//API version. This parameter is fixed to v1.
+	ApiVersion string `json:"apiVersion"`
+	Preferences map[string]interface{} `json:"preferences"`
+	//Cluster list.
+	Cluster []CertCluster `json:"clusters"`
+	Users []Users `json:"users"`
+	//Context list.
+	Contexts []Contexts `json:"contexts"`
+	//The current context.
+	CurrentContext string `json:"current-context"`
+}
+
+type CertCluster struct {
+	//Cluster name. This parameter is fixed to internalCluster.
+	Name string `json:"name"`
+	//Cluster information.
+	Cluster ClusterInfo `json:"cluster"`
+}
+
+type ClusterInfo struct {
+	//Server IP address.
+	Server string `json:"server"`
+	//Certificate data.
+	CertificateAuthorityData string `json:"certificate-authority-data"`
+}
+
+type Users struct {
+	//This parameter is fixed to user.
+	Name string `json:"name"`
+	//Certificate and ClientKey information of a specified user.
+	User UserInfo `json:"user"`
+}
+
+type UserInfo struct {
+	//Client certificate.
+	ClientCertificateData string `json:"client-certificate-data"`
+	//Client key data, containing the PEM data of the TLS key file of the client.
+	ClientKeyData string `json:"client-key-data"`
+}
+
+type Contexts struct {
+	//This parameter is fixed to internal.
+	Name string `json:"name"`
+	//Context information.
+	Context ContextInfo `json:"context"`
+}
+
+type ContextInfo struct {
+	//This parameter is fixed to internalCluster.
+	Cluster string `json:"cluster"`
+	//This parameter is fixed to user.
+	User string `json:"user"`
+}
+
 type commonResult struct {
 	golangsdk.Result
 }
@@ -113,6 +170,13 @@ type commonResult struct {
 // Extract is a function that accepts a result and extracts a cluster.
 func (r commonResult) Extract() (*Clusters, error) {
 	var s Clusters
+	err := r.ExtractInto(&s)
+	return &s, err
+}
+
+// Extract is a function that accepts a result and extracts a certificate.
+func (r commonResult) ExtractCertificate() (*Certificate, error) {
+	var s Certificate
 	err := r.ExtractInto(&s)
 	return &s, err
 }

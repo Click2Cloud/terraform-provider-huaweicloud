@@ -116,6 +116,38 @@ func resourceCCEClusterV3() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
+			"clusters": &schema.Schema{
+				Type:     schema.TypeList,
+				Computed: true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"server": &schema.Schema{
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"certificate_authority_data": &schema.Schema{
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+					},
+				},
+			},
+			"users": &schema.Schema{
+				Type:     schema.TypeList,
+				Computed: true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"client_certificate_data": &schema.Schema{
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"client_key_data": &schema.Schema{
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+					},
+				},
+			},
 		},
 	}
 }
@@ -226,6 +258,34 @@ func resourceCCEClusterV3Read(d *schema.ResourceData, meta interface{}) error {
 	d.Set("container_network_type", n.Spec.ContainerNetwork.Mode)
 	d.Set("container_network_cidr", n.Spec.ContainerNetwork.Cidr)
 	d.Set("region", GetRegion(d, config))
+
+	cert, err := clusters.GetCertificate(cceClient, n.Metadata.Id).ExtractCertificate()
+	log.Printf("[DEBUG] Retrieved n %+v", cert)
+
+	var certcluster []map[string]interface{}
+	for _, certs := range cert.Cluster {
+		mapping := map[string]interface{}{
+			"certificate_authority_data": certs.Cluster.CertificateAuthorityData,
+			"server":                     certs.Cluster.Server,
+		}
+		certcluster = append(certcluster, mapping)
+	}
+
+	var userInfo []map[string]interface{}
+	for _, users := range cert.Users {
+		mapping := map[string]interface{}{
+			"client_certificate_data": users.User.ClientCertificateData,
+			"client_key_data":         users.User.ClientKeyData,
+		}
+		userInfo = append(userInfo, mapping)
+	}
+
+	if err := d.Set("clusters", certcluster); err != nil {
+		return err
+	}
+	if err := d.Set("users", userInfo); err != nil {
+		return err
+	}
 
 	return nil
 }

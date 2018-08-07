@@ -86,6 +86,38 @@ func dataSourceCCEClusterV3() *schema.Resource {
 						},
 					}},
 			},
+			"clusters": &schema.Schema{
+				Type:     schema.TypeList,
+				Computed: true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"server": &schema.Schema{
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"certificate_authority_data": &schema.Schema{
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+					},
+				},
+			},
+			"users": &schema.Schema{
+				Type:     schema.TypeList,
+				Computed: true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"client_certificate_data": &schema.Schema{
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"client_key_data": &schema.Schema{
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+					},
+				},
+			},
 		},
 	}
 }
@@ -153,6 +185,34 @@ func dataSourceCCEClusterV3Read(d *schema.ResourceData, meta interface{}) error 
 		return err
 	}
 	d.Set("region", GetRegion(d, config))
+
+	n, err := clusters.GetCertificate(cceClient,Cluster.Metadata.Id).ExtractCertificate()
+	log.Printf("[DEBUG] Retrieved n %+v", n)
+
+	var certcluster []map[string]interface{}
+	for _, cert := range n.Cluster{
+		mapping := map[string]interface{}{
+			"certificate_authority_data": cert.Cluster.CertificateAuthorityData,
+			"server":  					  cert.Cluster.Server,
+		}
+		certcluster = append(certcluster, mapping)
+	}
+
+	var userInfo []map[string]interface{}
+	for _, users := range n.Users{
+		mapping := map[string]interface{}{
+			"client_certificate_data": users.User.ClientCertificateData,
+			"client_key_data":  	   users.User.ClientKeyData,
+		}
+		userInfo = append(userInfo, mapping)
+	}
+
+	if err := d.Set("clusters", certcluster); err != nil {
+		return err
+	}
+	if err := d.Set("users", userInfo); err != nil {
+		return err
+	}
 
 	return nil
 }

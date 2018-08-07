@@ -148,6 +148,15 @@ func Get(c *golangsdk.ServiceClient, id string) (r GetResult) {
 	return
 }
 
+// GetCertificate retrieves a particular cluster certificates based on cluster ID.
+func GetCertificate(c *golangsdk.ServiceClient, id string) (r GetResult) {
+	_, r.Err = c.Get(certificateURL(c, id), &r.Body, &golangsdk.RequestOpts{
+		OkCodes:     []int{200},
+		MoreHeaders: RequestOpts.MoreHeaders, JSONBody: nil,
+	})
+	return
+}
+
 // UpdateOpts contains all the values needed to update a new cluster
 type UpdateOpts struct {
 	Spec UpdateSpec `json:"spec" required:"true"`
@@ -190,3 +199,4 @@ func Delete(c *golangsdk.ServiceClient, id string) (r DeleteResult) {
 	})
 	return
 }
+
