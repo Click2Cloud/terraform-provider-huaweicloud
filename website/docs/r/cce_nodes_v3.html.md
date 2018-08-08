@@ -15,13 +15,14 @@ Add a node to a container cluster.
  ```hcl
    variable "cluster_id" { }
    variable "ssh_key" { }
+   variable "az" { }
 
    resource "huaweicloud_cce_node_v3" "node_1" {
     cluster_id="${var.cluster_id}"
     name = "node1"
     flavor="s1.medium"
     iptype="5_bgp"
-    az= "cn-east-2a"
+    az= "${var.az}"
     sshkey="${var.ssh_key}"
     root_volume = {
      size= 40,

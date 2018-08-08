@@ -26,7 +26,7 @@ func resourceCCEClusterV3() *schema.Resource {
 			Delete: schema.DefaultTimeout(10 * time.Minute),
 		},
 
-		//request and response parameters
+
 		Schema: map[string]*schema.Schema{
 			"region": &schema.Schema{
 				Type:     schema.TypeString,
@@ -185,7 +185,8 @@ func resourceCCEClusterV3Create(d *schema.ResourceData, meta interface{}) error 
 	createOpts := clusters.CreateOpts{
 		Kind:       "Cluster",
 		ApiVersion: "v3",
-		Metadata: clusters.CreateMetaData{Name: d.Get("name").(string),
+		Metadata: clusters.CreateMetaData{
+			Name: d.Get("name").(string),
 			Labels:      resourceClusterLabelsV3(d),
 			Annotations: resourceClusterAnnotationsV3(d)},
 		Spec: clusters.Spec{
@@ -260,7 +261,6 @@ func resourceCCEClusterV3Read(d *schema.ResourceData, meta interface{}) error {
 	d.Set("region", GetRegion(d, config))
 
 	cert, err := clusters.GetCertificate(cceClient, n.Metadata.Id).ExtractCertificate()
-	log.Printf("[DEBUG] Retrieved n %+v", cert)
 
 	var certcluster []map[string]interface{}
 	for _, certs := range cert.Cluster {

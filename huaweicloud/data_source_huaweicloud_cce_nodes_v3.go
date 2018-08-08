@@ -7,7 +7,7 @@ import (
 	"log"
 )
 
-//Creates schema for data source
+
 func dataSourceCceNodesV3() *schema.Resource {
 	return &schema.Resource{
 		Read: dataSourceCceNodesV3Read,

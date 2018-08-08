@@ -139,7 +139,6 @@ func dataSourceCCEClusterV3Read(d *schema.ResourceData, meta interface{}) error 
 	}
 
 	refinedClusters, err := clusters.List(cceClient, listOpts)
-	log.Printf("[DEBUG] Value of allClusters: %#v", refinedClusters)
 	if err != nil {
 		return fmt.Errorf("Unable to retrieve clusters: %s", err)
 	}
@@ -156,7 +155,7 @@ func dataSourceCCEClusterV3Read(d *schema.ResourceData, meta interface{}) error 
 
 	Cluster := refinedClusters[0]
 
-	log.Printf("[DEBUG] Retrieved Clusters using given filter %s: %+v", Cluster.Metadata.Id, Cluster)
+	log.Printf("[INFO] Retrieved Clusters using given filter %s: %+v", Cluster.Metadata.Id, Cluster)
 	var v []map[string]interface{}
 	for _, endpoint := range Cluster.Status.Endpoints {
 
@@ -187,7 +186,6 @@ func dataSourceCCEClusterV3Read(d *schema.ResourceData, meta interface{}) error 
 	d.Set("region", GetRegion(d, config))
 
 	n, err := clusters.GetCertificate(cceClient,Cluster.Metadata.Id).ExtractCertificate()
-	log.Printf("[DEBUG] Retrieved n %+v", n)
 
 	var certcluster []map[string]interface{}
 	for _, cert := range n.Cluster{

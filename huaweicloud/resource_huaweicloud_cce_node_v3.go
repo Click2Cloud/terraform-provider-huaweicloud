@@ -151,20 +151,22 @@ func resourceCCENodeV3() *schema.Resource {
 	}
 }
 
-func resourceCCENodeLabelsV2(d *schema.ResourceData) map[string]string {
+func resourceCCENodeLabels(d *schema.ResourceData) map[string]string {
 	m := make(map[string]string)
 	for key, val := range d.Get("labels").(map[string]interface{}) {
 		m[key] = val.(string)
 	}
 	return m
 }
-func resourceCCENodeAnnotationsV2(d *schema.ResourceData) map[string]string {
+
+func resourceCCENodeAnnotations(d *schema.ResourceData) map[string]string {
 	m := make(map[string]string)
 	for key, val := range d.Get("annotations").(map[string]interface{}) {
 		m[key] = val.(string)
 	}
 	return m
 }
+
 func resourceCCEDataVolume(d *schema.ResourceData) []nodes.VolumeSpec {
 	volumeRaw := d.Get("data_volumes").(*schema.Set).List()
 	volumes := make([]nodes.VolumeSpec, len(volumeRaw))
@@ -178,16 +180,18 @@ func resourceCCEDataVolume(d *schema.ResourceData) []nodes.VolumeSpec {
 	}
 	return volumes
 }
+
 func resourceCCERootVolume(d *schema.ResourceData) nodes.VolumeSpec {
-	var nics nodes.VolumeSpec
-	nicsRaw := d.Get("root_volume").([]interface{})
-	if len(nicsRaw) == 1 {
-		nics.Size = nicsRaw[0].(map[string]interface{})["size"].(int)
-		nics.VolumeType = nicsRaw[0].(map[string]interface{})["volumetype"].(string)
-		nics.ExtendParam = nicsRaw[0].(map[string]interface{})["extend_param"].(string)
+	var rootvolume nodes.VolumeSpec
+	rootvolumeRaw := d.Get("root_volume").([]interface{})
+	if len(rootvolumeRaw) == 1 {
+		rootvolume.Size = rootvolumeRaw[0].(map[string]interface{})["size"].(int)
+		rootvolume.VolumeType = rootvolumeRaw[0].(map[string]interface{})["volumetype"].(string)
+		rootvolume.ExtendParam = rootvolumeRaw[0].(map[string]interface{})["extend_param"].(string)
 	}
-	return nics
+	return rootvolume
 }
+
 func resourceCCEEipIDs(d *schema.ResourceData) []string {
 	rawID := d.Get("eip_ids").(*schema.Set)
 	id := make([]string, rawID.Len())
@@ -196,6 +200,7 @@ func resourceCCEEipIDs(d *schema.ResourceData) []string {
 	}
 	return id
 }
+
 func resourceCCENodeV3Create(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 	nodeClient, err := config.cceV3Client(GetRegion(d, config))
@@ -208,8 +213,8 @@ func resourceCCENodeV3Create(d *schema.ResourceData, meta interface{}) error {
 		ApiVersion: "v3",
 		Metadata: nodes.CreateMetaData{
 			Name:        d.Get("name").(string),
-			Labels:      resourceCCENodeLabelsV2(d),
-			Annotations: resourceCCENodeAnnotationsV2(d),
+			Labels:      resourceCCENodeLabels(d),
+			Annotations: resourceCCENodeAnnotations(d),
 		},
 		Spec: nodes.Spec{
 			Flavor:      d.Get("flavor").(string),
@@ -237,6 +242,7 @@ func resourceCCENodeV3Create(d *schema.ResourceData, meta interface{}) error {
 
 	clusterid := d.Get("cluster_id").(string)
 	stateCluster := &resource.StateChangeConf{
+		Pending:    []string{"Creating"},
 		Target:     []string{"Available"},
 		Refresh:    waitForClusterAvailable(nodeClient, clusterid),
 		Timeout:    25 * time.Minute,
@@ -248,6 +254,7 @@ func resourceCCENodeV3Create(d *schema.ResourceData, meta interface{}) error {
 	s, err := nodes.Create(nodeClient, clusterid, createOpts).Extract()
 	if err != nil {
 		if _, ok := err.(golangsdk.ErrDefault403); ok {
+			// wait for cluster to become available
 			retryNode, err := recursiveCreate(nodeClient, createOpts, clusterid, 403)
 			if err == "fail" {
 				return fmt.Errorf("Error creating HuaweiCloud Node")
@@ -311,11 +318,11 @@ func resourceCCENodeV3Read(d *schema.ResourceData, meta interface{}) error {
 	d.Set("extend_param", s.Spec.ExtendParam)
 	d.Set("sshkey", s.Spec.Login.SshKey)
 	var volumes []map[string]interface{}
-	for _, pairObject := range s.Spec.DataVolumes {
+	for _, volumeObject := range s.Spec.DataVolumes {
 		volume := make(map[string]interface{})
-		volume["size"] = pairObject.Size
-		volume["volumetype"] = pairObject.VolumeType
-		volume["extend_param"] = pairObject.ExtendParam
+		volume["size"] = volumeObject.Size
+		volume["volumetype"] = volumeObject.VolumeType
+		volume["extend_param"] = volumeObject.ExtendParam
 		volumes = append(volumes, volume)
 	}
 	if err := d.Set("data_volumes", volumes); err != nil {
@@ -357,7 +364,7 @@ func resourceCCENodeV3Update(d *schema.ResourceData, meta interface{}) error {
 	clusterid := d.Get("cluster_id").(string)
 	_, err = nodes.Update(nodeClient, clusterid, d.Id(), updateOpts).Extract()
 	if err != nil {
-		return fmt.Errorf("Error updating HuaweiCloud  Node: %s", err)
+		return fmt.Errorf("Error updating HuaweiCloud Node: %s", err)
 	}
 
 	return resourceCCENodeV3Read(d, meta)
@@ -372,7 +379,7 @@ func resourceCCENodeV3Delete(d *schema.ResourceData, meta interface{}) error {
 	clusterid := d.Get("cluster_id").(string)
 	err = nodes.Delete(nodeClient, clusterid, d.Id()).ExtractErr()
 	if err != nil {
-		return fmt.Errorf("Error deleting HuaweiCloud CCE Cluster: %s", err)
+		return fmt.Errorf("Error deleting HuaweiCloud CCE Node: %s", err)
 	}
 	stateConf := &resource.StateChangeConf{
 		Pending:    []string{"Deleting"},
@@ -442,6 +449,7 @@ func waitForClusterAvailable(cceClient *golangsdk.ServiceClient, clusterId strin
 func recursiveCreate(cceClient *golangsdk.ServiceClient, opts nodes.CreateOptsBuilder, ClusterID string, errCode int) (*nodes.Nodes, string) {
 	if errCode == 403 {
 		stateCluster := &resource.StateChangeConf{
+			Pending:    []string{"Creating"},
 			Target:     []string{"Available"},
 			Refresh:    waitForClusterAvailable(cceClient, ClusterID),
 			Timeout:    25 * time.Minute,
@@ -454,7 +462,6 @@ func recursiveCreate(cceClient *golangsdk.ServiceClient, opts nodes.CreateOptsBu
 		}
 		s, err := nodes.Create(cceClient, ClusterID, opts).Extract()
 		if err != nil {
-			//if err.(golangsdk.ErrUnexpectedResponseCode).Actual == 403 {
 			if _, ok := err.(golangsdk.ErrDefault403); ok {
 				return recursiveCreate(cceClient, opts, ClusterID, 403)
 			} else {

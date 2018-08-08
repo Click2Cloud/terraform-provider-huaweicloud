@@ -800,10 +800,10 @@
 			"revisionTime": "2018-07-31T01:25:28Z"
 		},
 		{
-			"checksumSHA1": "xDEoWEA9ygauLBKnsNzsa1XKvOc=",
+			"checksumSHA1": "LC44tXFE9sx2ANXz4Pr5x+X8mkk=",
 			"path": "github.com/huaweicloud/golangsdk/openstack/cce/v3/nodes",
-			"revision": "fdea87e5a2d61c3072101509ebd93f755d9cbc4f",
-			"revisionTime": "2018-07-20T15:04:31Z"
+			"revision": "987421a572b1f5a6e3f2059735af3602e51ef16c",
+			"revisionTime": "2018-08-07T14:06:48Z"
 		},
 		{
 			"checksumSHA1": "lpp6hBnX9xBhrnxXc0i/5fHHoWY=",
