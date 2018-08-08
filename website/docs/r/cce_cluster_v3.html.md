@@ -51,25 +51,35 @@ The following arguments are supported:
 
 * `extend_param` - (Optional) Extended parameter. Changing this parameter will create a new cluster resource.
 
-**hostNetwok - (Required)** Node network parameters
+* `vpc_id` - (Required) The ID of the VPC used to create the node. Changing this parameter will create a new cluster resource.
 
-  * `vpc_id` - (Required) The ID of the VPC used to create the node. Changing this parameter will create a new cluster resource.
+* `subnet_id` - (Required) The ID of the subnet used to create the node. Changing this parameter will create a new cluster resource.
 
-  * `subnet_id` - (Required) The ID of the subnet used to create the node. Changing this parameter will create a new cluster resource.
+* `highway_subnet_id` - (Optional) The ID of the high speed network used to create bare metal nodes. Changing this parameter will create a new cluster resource.
 
-  * `highway_subnet_id` - (Optional) The ID of the high speed network used to create bare metal nodes. Changing this parameter will create a new cluster resource.
+* `container_network_type` - (Required) Container network parameters.
 
-**container_network_type** **- (Required)** Container network parameters.
-
-  * `container_network_cidr` - (Optional) Container network segment. Changing this parameter will create a new cluster resource.
+* `container_network_cidr` - (Optional) Container network segment. Changing this parameter will create a new cluster resource.
 
 ## Attributes Reference
 
 All above argument parameters can be exported as attribute parameters along with attribute reference.
 
-  * `id` -  Id of the cluster resource.
+ * `id` -  Id of the cluster resource.
 
-  * `status` -  Cluster status information.
+ * `status` -  Cluster status information.
+
+ **clusters**
+
+ * `server` - The server IP address.
+
+ * `certificate_authority_data` - The certificate data.
+
+ **users**
+
+ * `client_certificate_data` - The client certificate.
+
+ * `client_key_data` - The client key data, containing the PEM data of the TLS key file of the client.
 
 ## Import
 

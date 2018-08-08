@@ -34,7 +34,9 @@ The following arguments are supported:
 
 * `status` - (Optional) The state of the cluster.
 
-* `cluster_type` - (Optional) Type of the cluster. Possible values: VirtualMachine, BareMetal or Windows
+* `cluster_type` - (Optional) Type of the cluster. Possible values: VirtualMachine, BareMetal or Windows.
+
+* `vpc_id` - (Optional) The ID of the VPC that is used to create a node.
 
 ## Attributes Reference
 
@@ -44,10 +46,6 @@ All above argument parameters can be exported as attribute parameters along with
 
 * `description` - Cluster description.
 
-* `name` - The name of the cluster in string format.
-
-* `id` - The ID of the cluster.
-  
 * `flavor` - The cluster specification in string format.
 
 * `cluster_version` - The version of cluster in string format.
@@ -62,11 +60,21 @@ All above argument parameters can be exported as attribute parameters along with
 
 **endpoints**
 
-* `internal` - The address accessed within the user's subnet.
+* `url` - URL to the access address of the cluster.
 
-* `external` - Public network access address.
+* `type` - Type of the access address of the cluster, **internal**: internal network address, **external**: external network address
 
+**clusters**
 
+* `server` - The server IP address.
+
+* `certificate_authority_data` - The certificate data.
+
+**users**
+
+* `client_certificate_data` - The client certificate.
+
+* `client_key_data` - The client key data, containing the PEM data of the TLS key file of the client.
 
 
 
