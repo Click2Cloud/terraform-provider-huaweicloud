@@ -31,11 +31,19 @@ func dataSourceCceNodesV3() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
+			"annotations": &schema.Schema{
+				Type: schema.TypeMap,
+				Optional: true,
+			},
 			"flavor": &schema.Schema{
 				Type:     schema.TypeString,
 				Computed: true,
 			},
 			"az": &schema.Schema{
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"os": &schema.Schema{
 				Type:     schema.TypeString,
 				Computed: true,
 			},
@@ -112,10 +120,6 @@ func dataSourceCceNodesV3() *schema.Resource {
 				Computed: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 			},
-			"spec_extend_param": &schema.Schema{
-				Type:     schema.TypeString,
-				Computed: true,
-			},
 			"eip_count": &schema.Schema{
 				Type:     schema.TypeInt,
 				Computed: true,
@@ -187,6 +191,7 @@ func dataSourceCceNodesV3Read(d *schema.ResourceData, meta interface{}) error {
 	d.Set("node_id", Node.Metadata.Id)
 	d.Set("name", Node.Metadata.Name)
 	d.Set("flavor", Node.Spec.Flavor)
+	d.Set("os", Node.Spec.OS)
 	d.Set("az", Node.Spec.Az)
 	d.Set("billing_mode", Node.Spec.BillingMode)
 	d.Set("status", Node.Status.Phase)
@@ -202,7 +207,6 @@ func dataSourceCceNodesV3Read(d *schema.ResourceData, meta interface{}) error {
 	d.Set("server_id", Node.Status.ServerID)
 	d.Set("public_ip", Node.Status.PublicIP)
 	d.Set("private_ip", Node.Status.PrivateIP)
-	d.Set("spec_extend_param", Node.Spec.ExtendParam)
 	d.Set("eip_count", Node.Spec.PublicIP.Count)
 	d.Set("eip_ids", PublicIDs)
 

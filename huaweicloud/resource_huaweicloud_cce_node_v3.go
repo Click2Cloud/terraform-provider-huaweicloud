@@ -48,7 +48,6 @@ func resourceCCENodeV3() *schema.Resource {
 			"annotations": &schema.Schema{
 				Type:     schema.TypeMap,
 				Optional: true,
-				ForceNew: true,
 			},
 			"flavor": &schema.Schema{
 				Type:     schema.TypeString,
@@ -143,7 +142,7 @@ func resourceCCENodeV3() *schema.Resource {
 				ForceNew: true,
 			},
 			"extend_param": &schema.Schema{
-				Type:     schema.TypeString,
+				Type:     schema.TypeMap,
 				Optional: true,
 				ForceNew: true,
 			},
@@ -151,7 +150,7 @@ func resourceCCENodeV3() *schema.Resource {
 	}
 }
 
-func resourceCCENodeLabels(d *schema.ResourceData) map[string]string {
+func resourceCCELabels(d *schema.ResourceData) map[string]string {
 	m := make(map[string]string)
 	for key, val := range d.Get("labels").(map[string]interface{}) {
 		m[key] = val.(string)
@@ -159,7 +158,7 @@ func resourceCCENodeLabels(d *schema.ResourceData) map[string]string {
 	return m
 }
 
-func resourceCCENodeAnnotations(d *schema.ResourceData) map[string]string {
+func resourceCCEAnnotations(d *schema.ResourceData) map[string]string {
 	m := make(map[string]string)
 	for key, val := range d.Get("annotations").(map[string]interface{}) {
 		m[key] = val.(string)
@@ -192,6 +191,15 @@ func resourceCCERootVolume(d *schema.ResourceData) nodes.VolumeSpec {
 	return rootvolume
 }
 
+func resourceCCEExtendParam(d *schema.ResourceData) map[string]interface{} {
+	m := make(map[string]interface{})
+	for key, val := range d.Get("extend_param").(map[string]interface{}) {
+		m[key] = val.(string)
+	}
+
+	return m
+}
+
 func resourceCCEEipIDs(d *schema.ResourceData) []string {
 	rawID := d.Get("eip_ids").(*schema.Set)
 	id := make([]string, rawID.Len())
@@ -208,13 +216,21 @@ func resourceCCENodeV3Create(d *schema.ResourceData, meta interface{}) error {
 		return fmt.Errorf("Error creating HuaweiCloud CCE Node client: %s", err)
 	}
 
+	listOpts := nodes.ListOpts{
+		Name:  d.Get("name").(string),
+	}
+	refinedNodes, err := nodes.List(nodeClient, d.Get("cluster_id").(string), listOpts)
+	if len(refinedNodes) > 0 {
+		return fmt.Errorf("You already have node with name: %s . " +
+			"Please change the node name.", refinedNodes[0].Metadata.Name)
+	}
 	createOpts := nodes.CreateOpts{
 		Kind:       "Node",
 		ApiVersion: "v3",
 		Metadata: nodes.CreateMetaData{
 			Name:        d.Get("name").(string),
-			Labels:      resourceCCENodeLabels(d),
-			Annotations: resourceCCENodeAnnotations(d),
+			Labels:      resourceCCELabels(d),
+			Annotations: resourceCCEAnnotations(d),
 		},
 		Spec: nodes.Spec{
 			Flavor:      d.Get("flavor").(string),
@@ -236,7 +252,7 @@ func resourceCCENodeV3Create(d *schema.ResourceData, meta interface{}) error {
 			},
 			BillingMode: d.Get("billing_mode").(int),
 			Count:       1,
-			ExtendParam: d.Get("extend_param").(string),
+			ExtendParam: resourceCCEExtendParam(d),
 		},
 	}
 
@@ -265,11 +281,11 @@ func resourceCCENodeV3Create(d *schema.ResourceData, meta interface{}) error {
 		}
 	}
 
-	job, err := nodes.GetJobDetails(nodeClient, s.Status.JobID).ExtractJob()
+	refinedNodesAgain, err := nodes.List(nodeClient, d.Get("cluster_id").(string), listOpts)
 	if err != nil {
-		return fmt.Errorf("Error fetching HuaweiCloud Job Details: %s", err)
+		return fmt.Errorf("Error fetching HuaweiCloud Node Details: %s", err)
 	}
-	nodeid := job.Spec.SubJobs[0].Spec.SubJobs[0].Spec.ResourceID
+	nodeid := refinedNodesAgain[0].Metadata.Id
 	log.Printf("[DEBUG] Waiting for CCE Node (%s) to become available", s.Metadata.Name)
 	stateConf := &resource.StateChangeConf{
 		Pending:    []string{"Creating"},
@@ -281,8 +297,7 @@ func resourceCCENodeV3Create(d *schema.ResourceData, meta interface{}) error {
 	}
 	_, err = stateConf.WaitForState()
 
-	node, err := nodes.Get(nodeClient, clusterid, nodeid).Extract()
-	d.SetId(node.Metadata.Id)
+	d.SetId(refinedNodesAgain[0].Metadata.Id)
 	d.Set("iptype", s.Spec.PublicIP.Eip.IpType)
 	d.Set("chargemode", s.Spec.PublicIP.Eip.Bandwidth.ChargeMode)
 	d.Set("bandwidth_size", s.Spec.PublicIP.Eip.Bandwidth.Size)
@@ -360,7 +375,14 @@ func resourceCCENodeV3Update(d *schema.ResourceData, meta interface{}) error {
 	if d.HasChange("name") {
 		updateOpts.Metadata.Name = d.Get("name").(string)
 	}
-
+	listOpts := nodes.ListOpts{
+		Name:  d.Get("name").(string),
+	}
+	refinedNodes, err := nodes.List(nodeClient, d.Get("cluster_id").(string), listOpts)
+	if len(refinedNodes) > 0 {
+		return fmt.Errorf("You already have node with name: %s . " +
+			"Please change the node name to update.", refinedNodes[0].Metadata.Name)
+	}
 	clusterid := d.Get("cluster_id").(string)
 	_, err = nodes.Update(nodeClient, clusterid, d.Id(), updateOpts).Extract()
 	if err != nil {

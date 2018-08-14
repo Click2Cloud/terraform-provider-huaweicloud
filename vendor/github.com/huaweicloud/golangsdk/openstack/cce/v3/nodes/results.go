@@ -46,6 +46,8 @@ type Spec struct {
 	Flavor string `json:"flavor" required:"true"`
 	// The value of the available partition name
 	Az string `json:"az" required:"true"`
+	// Node os specification
+	OS string `json:"os,omitempty"`
 	// Node login parameters
 	Login LoginSpec `json:"login" required:"true"`
 	// System disk parameter of the node
@@ -59,7 +61,7 @@ type Spec struct {
 	// Number of nodes when creating in batch
 	Count int `json:"count" required:"true"`
 	// Extended parameter
-	ExtendParam string `json:"extendParam,omitempty"`
+	ExtendParam map[string]interface{} `json:"extendParam,omitempty"`
 }
 
 // Gives the current status of the node
