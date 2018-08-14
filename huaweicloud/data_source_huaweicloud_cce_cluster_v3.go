@@ -185,22 +185,22 @@ func dataSourceCCEClusterV3Read(d *schema.ResourceData, meta interface{}) error 
 	}
 	d.Set("region", GetRegion(d, config))
 
-	n, err := clusters.GetCertificate(cceClient,Cluster.Metadata.Id).ExtractCertificate()
+	n, err := clusters.GetCertificate(cceClient, Cluster.Metadata.Id).ExtractCertificate()
 
 	var certcluster []map[string]interface{}
-	for _, cert := range n.Cluster{
+	for _, cert := range n.Cluster {
 		mapping := map[string]interface{}{
 			"certificate_authority_data": cert.Cluster.CertificateAuthorityData,
-			"server":  					  cert.Cluster.Server,
+			"server":                     cert.Cluster.Server,
 		}
 		certcluster = append(certcluster, mapping)
 	}
 
 	var userInfo []map[string]interface{}
-	for _, users := range n.Users{
+	for _, users := range n.Users {
 		mapping := map[string]interface{}{
 			"client_certificate_data": users.User.ClientCertificateData,
-			"client_key_data":  	   users.User.ClientKeyData,
+			"client_key_data":         users.User.ClientKeyData,
 		}
 		userInfo = append(userInfo, mapping)
 	}

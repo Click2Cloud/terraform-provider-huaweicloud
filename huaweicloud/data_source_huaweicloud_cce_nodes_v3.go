@@ -2,11 +2,11 @@ package huaweicloud
 
 import (
 	"fmt"
+	"log"
+
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/huaweicloud/golangsdk/openstack/cce/v3/nodes"
-	"log"
 )
-
 
 func dataSourceCceNodesV3() *schema.Resource {
 	return &schema.Resource{
@@ -32,7 +32,7 @@ func dataSourceCceNodesV3() *schema.Resource {
 				Optional: true,
 			},
 			"annotations": &schema.Schema{
-				Type: schema.TypeMap,
+				Type:     schema.TypeMap,
 				Optional: true,
 			},
 			"flavor": &schema.Schema{

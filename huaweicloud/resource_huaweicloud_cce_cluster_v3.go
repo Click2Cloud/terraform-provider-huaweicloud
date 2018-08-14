@@ -26,7 +26,6 @@ func resourceCCEClusterV3() *schema.Resource {
 			Delete: schema.DefaultTimeout(10 * time.Minute),
 		},
 
-
 		Schema: map[string]*schema.Schema{
 			"region": &schema.Schema{
 				Type:     schema.TypeString,
@@ -186,7 +185,7 @@ func resourceCCEClusterV3Create(d *schema.ResourceData, meta interface{}) error 
 		Kind:       "Cluster",
 		ApiVersion: "v3",
 		Metadata: clusters.CreateMetaData{
-			Name: d.Get("name").(string),
+			Name:        d.Get("name").(string),
 			Labels:      resourceClusterLabelsV3(d),
 			Annotations: resourceClusterAnnotationsV3(d)},
 		Spec: clusters.Spec{

@@ -217,11 +217,11 @@ func resourceCCENodeV3Create(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	listOpts := nodes.ListOpts{
-		Name:  d.Get("name").(string),
+		Name: d.Get("name").(string),
 	}
 	refinedNodes, err := nodes.List(nodeClient, d.Get("cluster_id").(string), listOpts)
 	if len(refinedNodes) > 0 {
-		return fmt.Errorf("You already have node with name: %s . " +
+		return fmt.Errorf("You already have node with name: %s . "+
 			"Please change the node name.", refinedNodes[0].Metadata.Name)
 	}
 	createOpts := nodes.CreateOpts{
@@ -376,11 +376,11 @@ func resourceCCENodeV3Update(d *schema.ResourceData, meta interface{}) error {
 		updateOpts.Metadata.Name = d.Get("name").(string)
 	}
 	listOpts := nodes.ListOpts{
-		Name:  d.Get("name").(string),
+		Name: d.Get("name").(string),
 	}
 	refinedNodes, err := nodes.List(nodeClient, d.Get("cluster_id").(string), listOpts)
 	if len(refinedNodes) > 0 {
-		return fmt.Errorf("You already have node with name: %s . " +
+		return fmt.Errorf("You already have node with name: %s . "+
 			"Please change the node name to update.", refinedNodes[0].Metadata.Name)
 	}
 	clusterid := d.Get("cluster_id").(string)
