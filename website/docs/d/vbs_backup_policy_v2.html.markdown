@@ -1,6 +1,6 @@
 ---
 layout: "huaweicloud"
-page_title: "Huaweicloud: huaweicloud_vbs_backup_policy_v2"
+page_title: "HuaweiCloud: huaweicloud_vbs_backup_policy_v2"
 sidebar_current: "docs-huaweicloud-datasource-vbs-backup-policy-v2"
 description: |-
   Provides details about a specific VBS backup policy.
