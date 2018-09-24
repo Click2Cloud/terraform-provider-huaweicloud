@@ -554,10 +554,10 @@
 			"revisionTime": "2018-09-11T07:04:38Z"
 		},
 		{
-			"checksumSHA1": "EpC+shfMtpoDGHocPkFe+15LkY8=",
+			"checksumSHA1": "Xucq+Ue/IefP4qrReitCN5F3rRg=",
 			"path": "github.com/huaweicloud/golangsdk/openstack/blockstorage/v2/volumes",
-			"revision": "75837c0e32c3577a74950b521e3ad3aaec05b34b",
-			"revisionTime": "2018-09-11T07:04:38Z"
+			"revision": "f08a3288280dde5efc7e934854f4f920c99a8534",
+			"revisionTime": "2018-09-17T05:36:38Z"
 		},
 		{
 			"checksumSHA1": "q1aqMo0piceUY8M6d6xzbL1mgdo=",
@@ -1102,5 +1102,5 @@
 			"versionExact": "v1.6.1"
 		}
 	],
-	"rootPath": "github.com/freesky-edward/terraform-provider-huaweicloud"
+	"rootPath": "github.com/terraform-providers/terraform-provider-huaweicloud"
 }
