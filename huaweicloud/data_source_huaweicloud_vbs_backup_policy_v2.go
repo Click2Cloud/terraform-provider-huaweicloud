@@ -97,18 +97,14 @@ func dataSourceVBSPolicyV2Read(d *schema.ResourceData, meta interface{}) error {
 	policyID := d.Get("id").(string)
 	rawTags := d.Get("filter_tags").([]interface{})
 	if len(rawTags) > 0 {
-		tagsOpts := tags.QueryOpts{Action: "filter", Tags: getVBSFilterTagsV2(d)}
-		querytags, err := tags.Query(vbsClient, tagsOpts).ExtractResources()
+		tagsOpts := tags.ListOpts{Action: "filter", Tags: getVBSFilterTagsV2(d)}
+		querytags, err := tags.ListResources(vbsClient, tagsOpts).ExtractResources()
 		if err != nil {
 			return fmt.Errorf("Error Querying backup policy using tags: %s ", err)
 		}
 		if querytags.TotalCount > 1 {
 			return fmt.Errorf("Your tags query returned more than one result." +
 				" Please try a more specific search criteria.")
-		}
-		if querytags.TotalCount < 1 {
-			return fmt.Errorf("Your query returned no results. " +
-				"Please change your search criteria and try again.")
 		}
 		if querytags.TotalCount > 0 {
 			policyID = querytags.Resource[0].ResourceID
@@ -151,7 +147,7 @@ func dataSourceVBSPolicyV2Read(d *schema.ResourceData, meta interface{}) error {
 
 	n, err := tags.Get(vbsClient, Policy.ID).Extract()
 	var tag []map[string]interface{}
-	for _, policy := range n.Tag {
+	for _, policy := range n.Tags {
 		mapping := map[string]interface{}{
 			"key":   policy.Key,
 			"value": policy.Value,
@@ -166,9 +162,9 @@ func dataSourceVBSPolicyV2Read(d *schema.ResourceData, meta interface{}) error {
 	return nil
 }
 
-func getVBSFilterTagsV2(d *schema.ResourceData) []tags.QueryTags {
+func getVBSFilterTagsV2(d *schema.ResourceData) []tags.Tags {
 	rawTags := d.Get("filter_tags").([]interface{})
-	filterTags := make([]tags.QueryTags, len(rawTags))
+	filterTags := make([]tags.Tags, len(rawTags))
 	for i, raw := range rawTags {
 		rawMap := raw.(map[string]interface{})
 		rawValues := rawMap["values"].(*schema.Set)
@@ -176,11 +172,10 @@ func getVBSFilterTagsV2(d *schema.ResourceData) []tags.QueryTags {
 		for i, list := range rawValues.List() {
 			values[i] = list.(string)
 		}
-		filterTags[i] = tags.QueryTags{
+		filterTags[i] = tags.Tags{
 			Key:    rawMap["key"].(string),
 			Values: values,
 		}
 	}
 	return filterTags
 }
-

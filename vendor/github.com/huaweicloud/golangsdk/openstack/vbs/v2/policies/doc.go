@@ -1,7 +1,7 @@
 package policies
 
 /*
-Package shares enables management and retrieval of Shares
+Package policies enables management and retrieval of backup policies
 VBS service.
 
 Example to List Policies
@@ -15,7 +15,7 @@ Example to List Policies
 
 Example to Create a Policy
 
-	creatopts := policies.CreateOpts{PolicyName: "Demo_policy", ScheduledPolicy: policies.CreateSchedule{StartTime: "12:00", Status: "ON", Frequency: 1, RententionNum: 12, RemainFirstBackup: "Y",}, Tags:[]policies.Tags{policies.Tags{Key:"key",Value:"value"}}}
+	creatopts := policies.CreateOpts{PolicyName: "Demo_policy", ScheduledPolicy: policies.ScheduledPolicy{StartTime: "12:00", Status: "ON", Frequency: 1, RententionNum: 12, RemainFirstBackup: "Y",}, Tags:[]policies.Tag{{Key:"key",Value:"value"}}}
 	create, err := policies.Create(client, creatopts).Extract()
 	if err != nil {
 		panic(err)
@@ -30,11 +30,11 @@ Example to Delete a Policy
 
 Example to Associate a resource to a Policy
 
-	assopts := policies.AssociateOpts{PolicyID:"5b549fad-c4e5-4d7e-83b9-eea366f27017",Resources:[]policies.AssociateResources{policies.AssociateResources{ResourceID:"bdec76de-3cca-46b4-8b71-a333467a1b79",ResourceType:"volume"},{ResourceID:"286b8b84-6640-4f6f-acde-2a58e490f371",ResourceType:"volume"}}}  //Tags:[]policy.Tags{policy.Tags{Key:"key",Value:"value"}}
+	assopts := policies.AssociateOpts{PolicyID:"5b549fad-c4e5-4d7e-83b9-eea366f27017",Resources:[]policies.AssociateResource{{ResourceID:"bdec76de-3cca-46b4-8b71-a333467a1b79",ResourceType:"volume"},{ResourceID:"286b8b84-6640-4f6f-acde-2a58e490f371",ResourceType:"volume"}}}
 	associate,err := policies.Associate(client,assopts).ExtractResource()
 
 Example to disassociate a resource to a Policy
-	disassopts := policies.DisassociateOpts{Resources: []policies.DisassociateResources{policies.DisassociateResources{ResourceID: "bdec76de-3cca-46b4-8b71-a333467a1b79"},{ResourceID: "286b8b84-6640-4f6f-acde-2a58e490f371"}}} //Tags:[]policy.Tags{policy.Tags{Key:"key",Value:"value"}}
+	disassopts := policies.DisassociateOpts{Resources: []policies.DisassociateResource{{ResourceID: "bdec76de-3cca-46b4-8b71-a333467a1b79"},{ResourceID: "286b8b84-6640-4f6f-acde-2a58e490f371"}}}
 	disassociate,err := policies.Disassociate(client,"5b549fad-c4e5-4d7e-83b9-eea366f27017",disassopts).ExtractResource()
 
 */

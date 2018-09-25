@@ -14,20 +14,20 @@ type CreateOptsBuilder interface {
 }
 
 // CreateOpts contains the options for create a Policy. This object is
-// passed to Policy.Create(). For more information about these parameters,
+// passed to Create(). For more information about these parameters,
 // please refer to the Policy object, or the volume backup service API v2
 // documentation
 type CreateOpts struct {
 	//Backup policy name.It cannot start with default.
 	Name string `json:"backup_policy_name" required:"true"`
 	//Details about the scheduling policy
-	ScheduledPolicy CreateSchedule `json:"scheduled_policy" required:"true"`
+	ScheduledPolicy ScheduledPolicy `json:"scheduled_policy" required:"true"`
 	// Tags to be configured for the backup policy
-	Tags []Tags `json:"tags,omitempty"`
+	Tags []Tag `json:"tags,omitempty"`
 }
 
-//Details about the scheduling policy
-type CreateSchedule struct {
+//Details about the scheduling policy for create
+type ScheduledPolicy struct {
 	//Start time of the backup job.
 	StartTime string `json:"start_time" required:"true"`
 	//Backup interval (1 to 14 days)
@@ -40,7 +40,7 @@ type CreateSchedule struct {
 	Status string `json:"status" required:"true"`
 }
 
-type Tags struct {
+type Tag struct {
 	//Tag key. A tag key consists of up to 36 characters
 	Key string `json:"key" required:"true"`
 	//Tag value. A tag value consists of 0 to 43 characters
@@ -82,6 +82,7 @@ type UpdateOpts struct {
 	ScheduledPolicy UpdateSchedule `json:"scheduled_policy,omitempty"`
 }
 
+//Details about the scheduling policy for update.
 type UpdateSchedule struct {
 	//Start time of the backup job.
 	StartTime string `json:"start_time,omitempty"`
@@ -101,7 +102,7 @@ func (opts UpdateOpts) ToPolicyUpdateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
-//Update will Update an existing backup Policy based on the values in CreateOpts.To extract
+//Update will Update an existing backup Policy based on the values in UpdateOpts.To extract
 // the Policy object from the response, call the Extract method on the
 // UpdateResult.
 func Update(c *golangsdk.ServiceClient, policyID string, opts UpdateOptsBuilder) (r UpdateResult) {
@@ -115,33 +116,20 @@ func Update(c *golangsdk.ServiceClient, policyID string, opts UpdateOptsBuilder)
 	return
 }
 
-//Delete will delete the specified backup policy
+//Delete will delete the specified backup policy.
 func Delete(c *golangsdk.ServiceClient, policyID string) (r DeleteResult) {
-	_, r.Err = c.Delete(resourceURL(c, policyID), &golangsdk.RequestOpts{
-		OkCodes: []int{204},
-	})
+	_, r.Err = c.Delete(resourceURL(c, policyID), nil)
 	return
 }
 
 //ListOpts allows filtering policies
 type ListOpts struct {
 	//Backup policy ID
-	ID string `json:"backup_policy_id"`
+	ID string
 	//Backup policy name
-	Name string `json:"backup_policy_name"`
+	Name string
 	//Backup policy status
-	Status string `json:"status"`
-}
-
-// ListOptsBuilder allows extensions to add parameters to the List request.
-type ListOptsBuilder interface {
-	ToPolicyListQuery() (string, error)
-}
-
-// ToPolicyListQuery formats a ListOpts into a query string.
-func (opts ListOpts) ToPolicyListQuery() (string, error) {
-	q, err := golangsdk.BuildQueryString(opts)
-	return q.String(), err
+	Status string
 }
 
 // List returns a Pager which allows you to iterate over a collection of
@@ -219,18 +207,18 @@ type AssociateOptsBuilder interface {
 	ToPolicyAssociateMap() (map[string]interface{}, error)
 }
 
-// AssociateOpts contains the options associate a resource to a Policy.
+// AssociateOpts contains the options to associate a resource to a Policy.
 type AssociateOpts struct {
-	//Backup policy name.It cannot start with default.
+	//Backup policy ID, to which the resource is to be associated.
 	PolicyID string `json:"backup_policy_id" required:"true"`
-	//Details about the scheduling policy
-	Resources []AssociateResources `json:"resources" required:"true"`
+	//Details about the resources to associate with the policy.
+	Resources []AssociateResource `json:"resources" required:"true"`
 }
 
-type AssociateResources struct {
-	//Backup policy name.It cannot start with default.
+type AssociateResource struct {
+	//The ID of the resource to associate with policy.
 	ResourceID string `json:"resource_id" required:"true"`
-	//Details about the scheduling policy
+	//Type of the resource , e.g. volume.
 	ResourceType string `json:"resource_type" required:"true"`
 }
 
@@ -264,10 +252,10 @@ type DisassociateOptsBuilder interface {
 // DisassociateOpts contains the options disassociate a resource from a Policy.
 type DisassociateOpts struct {
 	//Disassociate Resources
-	Resources []DisassociateResources `json:"resources" required:"true"`
+	Resources []DisassociateResource `json:"resources" required:"true"`
 }
 
-type DisassociateResources struct {
+type DisassociateResource struct {
 	//ResourceID
 	ResourceID string `json:"resource_id" required:"true"`
 }

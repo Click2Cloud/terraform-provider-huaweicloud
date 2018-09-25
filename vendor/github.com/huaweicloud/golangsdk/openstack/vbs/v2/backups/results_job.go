@@ -16,6 +16,8 @@ type JobStatus struct {
 	Entities   map[string]string `json:"entities"`
 	JobID      string            `json:"job_id"`
 	JobType    string            `json:"job_type"`
+	BeginTime  string            `json:"begin_time"`
+	EndTime    string            `json:"end_time"`
 	ErrorCode  string            `json:"error_code"`
 	FailReason string            `json:"fail_reason"`
 	SubJobs    []JobStatus       `json:"sub_jobs"`
@@ -39,14 +41,14 @@ func (r JobResult) ExtractJobStatus() (*JobStatus, error) {
 
 func WaitForJobSuccess(client *golangsdk.ServiceClient, secs int, jobID string) error {
 
-	client.Endpoint = strings.Replace(client.Endpoint, "v2", "v1", 1)
+	jobClient := *client
+	jobClient.Endpoint = strings.Replace(jobClient.Endpoint, "v2", "v1", 1)
 	return golangsdk.WaitFor(secs, func() (bool, error) {
 		job := new(JobStatus)
-		_, err := client.Get(client.ServiceURL(client.ProjectID, "jobs", jobID), &job, nil)
+		_, err := jobClient.Get(jobClient.ServiceURL("jobs", jobID), &job, nil)
 		if err != nil {
 			return false, err
 		}
-		fmt.Printf("JobStatus: %+v.\n", job)
 
 		if job.Status == "SUCCESS" {
 			return true, nil
@@ -62,13 +64,13 @@ func WaitForJobSuccess(client *golangsdk.ServiceClient, secs int, jobID string) 
 
 func GetJobEntity(client *golangsdk.ServiceClient, jobId string, label string) (interface{}, error) {
 
-	client.Endpoint = strings.Replace(client.Endpoint, "v2", "v1", 1)
+	jobClient := *client
+	jobClient.Endpoint = strings.Replace(jobClient.Endpoint, "v2", "v1", 1)
 	job := new(JobStatus)
-	_, err := client.Get(client.ServiceURL(client.ProjectID, "jobs", jobId), &job, nil)
+	_, err := jobClient.Get(jobClient.ServiceURL("jobs", jobId), &job, nil)
 	if err != nil {
 		return nil, err
 	}
-	fmt.Printf("JobStatus: %+v.\n", job)
 
 	if job.Status == "SUCCESS" {
 		if e := job.Entities[label]; e != "" {

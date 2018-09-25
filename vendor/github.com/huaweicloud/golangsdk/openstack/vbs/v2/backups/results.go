@@ -19,8 +19,8 @@ type Backup struct {
 	Status string `json:"status"`
 	//Backup description
 	Description string `json:"description"`
-	//AZ where the backup resides
-	AZ string `json:"availability_zone"`
+	//AvailabilityZone where the backup resides
+	AvailabilityZone string `json:"availability_zone"`
 	//Source volume ID of the backup
 	VolumeId string `json:"volume_id"`
 	//Cause of the backup failure
@@ -49,7 +49,7 @@ type Backup struct {
 	Incremental bool `json:"is_incremental"`
 }
 
-type Restore struct {
+type BackupRestoreInfo struct {
 	//Backup ID
 	BackupId string `json:"backup_id"`
 	//Volume ID
@@ -108,10 +108,10 @@ func (r commonResult) Extract() (*Backup, error) {
 	return s.Backup, err
 }
 
-// ExtractRestore is a function that accepts a result and extracts a backup
-func (r commonResult) ExtractRestore() (*Restore, error) {
+// ExtractBackupRestore is a function that accepts a result and extracts a backup
+func (r commonResult) ExtractBackupRestore() (*BackupRestoreInfo, error) {
 	var s struct {
-		Restore *Restore `json:"restore"`
+		Restore *BackupRestoreInfo `json:"restore"`
 	}
 	err := r.ExtractInto(&s)
 	return s.Restore, err

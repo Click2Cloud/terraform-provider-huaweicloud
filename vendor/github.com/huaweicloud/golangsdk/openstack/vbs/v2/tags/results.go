@@ -4,20 +4,13 @@ import (
 	"github.com/huaweicloud/golangsdk"
 )
 
-type Tags struct {
+type RespTags struct {
 	//contains list of tags, i.e.key value pair
-	Tag []ActionTags `json:"tags"`
-}
-
-type Tag struct {
-	//tag Key
-	Key string `json:"key"`
-	//tag Value
-	Value string `json:"value"`
+	Tags []Tag `json:"tags"`
 }
 
 type Resources struct {
-	//List of resources
+	//List of resources i.e. policies
 	Resource []Resource `json:"resources"`
 	//Total number of resources
 	TotalCount int `json:"total_count"`
@@ -56,8 +49,8 @@ type ActionResults struct {
 	commonResult
 }
 
-func (r commonResult) Extract() (*Tags, error) {
-	var response Tags
+func (r commonResult) Extract() (*RespTags, error) {
+	var response RespTags
 	err := r.ExtractInto(&response)
 	return &response, err
 }

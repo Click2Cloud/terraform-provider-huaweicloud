@@ -36,6 +36,10 @@ func List(c *golangsdk.ServiceClient, opts ListOpts) ([]Backup, error) {
 		return BackupPage{pagination.LinkedPageBase{PageResult: r}}
 	}).AllPages()
 
+	if err != nil {
+		return nil, err
+	}
+
 	allBackups, err := ExtractBackups(pages)
 	if err != nil {
 		return nil, err
@@ -100,10 +104,10 @@ type CreateOpts struct {
 	//Backup description
 	Description string `json:"description,omitempty"`
 	//List of tags to be configured for the backup resources
-	Tags []Tags `json:"tags,omitempty"`
+	Tags []Tag `json:"tags,omitempty"`
 }
 
-type Tags struct {
+type Tag struct {
 	//Tag key
 	Key string `json:"key" required:"true"`
 	//Tag value
@@ -135,21 +139,21 @@ type RestoreOptsBuilder interface {
 	ToRestoreCreateMap() (map[string]interface{}, error)
 }
 
-// RestoreOpts contains all the values needed to create a new backup.
-type RestoreOpts struct {
+// BackupRestoreOpts contains all the values needed to create a new backup.
+type BackupRestoreOpts struct {
 	//ID of the disk to be backed up
 	VolumeId string `json:"volume_id" required:"true"`
 }
 
-// ToRestoreCreateMap builds a create request body from RestoreOpts.
-func (opts RestoreOpts) ToRestoreCreateMap() (map[string]interface{}, error) {
+// ToRestoreCreateMap builds a create request body from BackupRestoreOpts.
+func (opts BackupRestoreOpts) ToRestoreCreateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "restore")
 }
 
-// CreateRestore will create a new Restore based on the values in RestoreOpts. To extract
-// the Restore object from the response, call the ExtractRestore method on the
+// CreateBackupRestore will create a new Restore based on the values in BackupRestoreOpts. To extract
+// the BackupRestoreInfo object from the response, call the ExtractBackupRestore method on the
 // CreateResult.
-func CreateRestore(c *golangsdk.ServiceClient, id string, opts RestoreOptsBuilder) (r CreateResult) {
+func CreateBackupRestore(c *golangsdk.ServiceClient, id string, opts RestoreOptsBuilder) (r CreateResult) {
 	b, err := opts.ToRestoreCreateMap()
 	if err != nil {
 		r.Err = err
@@ -159,7 +163,9 @@ func CreateRestore(c *golangsdk.ServiceClient, id string, opts RestoreOptsBuilde
 	return
 }
 
-// Get retrieves a particular backup based on its unique ID.
+// Get retrieves a particular backup based on its unique ID. To extract
+//// the Backup object from the response, call the Extract method on the
+//// GetResult.
 func Get(c *golangsdk.ServiceClient, id string) (r GetResult) {
 	_, r.Err = c.Get(resourceURL(c, id), &r.Body, nil)
 	return

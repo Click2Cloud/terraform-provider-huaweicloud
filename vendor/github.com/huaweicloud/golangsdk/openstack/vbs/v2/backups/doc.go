@@ -30,19 +30,18 @@ Example to Create a Backup
 		VolumeId:"5024a06e-6990-4f12-9dcc-8fe26b01a710",
 	}
 
-	backup, err := backups.Create(vbsClient, createOpts).ExtractJobResponse()
+	jobInfo, err := backups.Create(vbsClient, createOpts).ExtractJobResponse()
 	if err != nil {
 		panic(err)
 	}
 
-	JobId := "ff8080826576401e0165842868e01323"
-    err1 := backups.WaitForJobSuccess(client, int(120), JobId)
+    err1 := backups.WaitForJobSuccess(client, int(120), jobInfo.JobID)
 	if err1 != nil {
 		panic(err1)
 	}
 
 	Label := "backup_id"
-    entity, err2 := backups.GetJobEntity(client, JobId, Label)
+    entity, err2 := backups.GetJobEntity(client, jobInfo.JobID, Label)
 	fmt.Println(entity)
 	if err2 != nil {
 		panic(err2)
@@ -58,9 +57,9 @@ Example to Delete a Backup
 
 Example to Restore a Backup
 
-	restoreOpts := backups.RestoreOpts{VolumeId:"5024a06e-6990-4f12-9dcc-8fe26b01a710"}
+	restoreOpts := backups.BackupRestoreOpts{VolumeId:"5024a06e-6990-4f12-9dcc-8fe26b01a710"}
 
-	restore,err := backups.CreateRestore(vbsClient,"87566ed6-72cb-4053-aa6e-6f6216b3d507",backup).ExtractRestore()
+	restore,err := backups.CreateBackupRestore(vbsClient,"87566ed6-72cb-4053-aa6e-6f6216b3d507",backup).ExtractBackupRestore()
 	if err != nil {
 		panic(err)
 	}

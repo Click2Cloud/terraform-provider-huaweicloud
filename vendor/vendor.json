@@ -536,16 +536,16 @@
 			"revisionTime": "2016-07-20T23:31:40Z"
 		},
 		{
-			"checksumSHA1": "ykt/9eElRiINzJsPUmd3C3h7PlQ=",
+			"checksumSHA1": "2f5ynPhSwFv1gpKuopzKSk+N6WA=",
 			"path": "github.com/huaweicloud/golangsdk",
-			"revision": "02f6a219bc9199103fb0b6b930e10c28a4812baf",
-			"revisionTime": "2018-09-11T15:09:58Z"
+			"revision": "bc667b4964d9381ae75ac2c2c99e64b161cfb46b",
+			"revisionTime": "2018-09-18T15:16:54Z"
 		},
 		{
-			"checksumSHA1": "ihV1HQp5YYrJqrSF59Z1YmJcUEU=",
+			"checksumSHA1": "dBSYaaBC8YON15wgTCW0jb0rO0I=",
 			"path": "github.com/huaweicloud/golangsdk/openstack",
-			"revision": "02f6a219bc9199103fb0b6b930e10c28a4812baf",
-			"revisionTime": "2018-09-11T15:09:58Z"
+			"revision": "bc667b4964d9381ae75ac2c2c99e64b161cfb46b",
+			"revisionTime": "2018-09-18T15:16:54Z"
 		},
 		{
 			"checksumSHA1": "MrZDbuuLO9MlZmtSqPkmwDTNA90=",
@@ -920,22 +920,22 @@
 			"revisionTime": "2018-09-11T07:04:38Z"
 		},
 		{
-			"checksumSHA1": "T6Qwmfdk/MjdZpBcKCNBHDurkr0=",
+			"checksumSHA1": "7xZpRon0BdX3smmIQeTi2DUfeC0=",
 			"path": "github.com/huaweicloud/golangsdk/openstack/vbs/v2/backups",
-			"revision": "02f6a219bc9199103fb0b6b930e10c28a4812baf",
-			"revisionTime": "2018-09-11T15:09:58Z"
+			"revision": "bc667b4964d9381ae75ac2c2c99e64b161cfb46b",
+			"revisionTime": "2018-09-18T15:16:54Z"
 		},
 		{
-			"checksumSHA1": "YT3tzvkK/3/B2M/aqD4Uge4Xo7o=",
+			"checksumSHA1": "0ja94F7LBVXcdh0pKQm9lNr1E+w=",
 			"path": "github.com/huaweicloud/golangsdk/openstack/vbs/v2/policies",
-			"revision": "8d5831ae9b57636391bd9d8e901cfa47955021c5",
-			"revisionTime": "2018-08-29T06:29:18Z"
+			"revision": "bc667b4964d9381ae75ac2c2c99e64b161cfb46b",
+			"revisionTime": "2018-09-18T15:16:54Z"
 		},
 		{
-			"checksumSHA1": "lBEkQffq4ty/kG//pEGDMmy5jL8=",
+			"checksumSHA1": "fc3FTnwCo8Yj9lj8b+3sTwHHKsY=",
 			"path": "github.com/huaweicloud/golangsdk/openstack/vbs/v2/tags",
-			"revision": "8d5831ae9b57636391bd9d8e901cfa47955021c5",
-			"revisionTime": "2018-08-29T06:29:18Z"
+			"revision": "bc667b4964d9381ae75ac2c2c99e64b161cfb46b",
+			"revisionTime": "2018-09-18T15:16:54Z"
 		},
 		{
 			"checksumSHA1": "unuouwL0EzTLflKCDFkwzrJ81d4=",

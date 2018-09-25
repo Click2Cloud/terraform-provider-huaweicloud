@@ -110,7 +110,7 @@ func dataSourceVBSBackupV2Read(d *schema.ResourceData, meta interface{}) error {
 	d.Set("name", Backup.Name)
 	d.Set("description", Backup.Description)
 	d.Set("status", Backup.Status)
-	d.Set("availability_zone", Backup.AZ)
+	d.Set("availability_zone", Backup.AvailabilityZone)
 	d.Set("snapshot_id", Backup.SnapshotId)
 	d.Set("service_metadata", Backup.ServiceMetadata)
 	d.Set("size", Backup.Size)

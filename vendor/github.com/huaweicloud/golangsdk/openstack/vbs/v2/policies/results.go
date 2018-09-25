@@ -11,41 +11,27 @@ type Policy struct {
 	//Backup policy name
 	Name string `json:"backup_policy_name"`
 	//Details about the scheduling policy
-	ScheduledPolicy Schedule `json:"scheduled_policy"`
+	ScheduledPolicy ScheduledPolicy `json:"scheduled_policy"`
 	//Number of volumes associated with the backup policy
 	ResourceCount int `json:"policy_resource_count"`
 }
 
-type Schedule struct {
-	//Start time points of the backup job, which are expressed in the UTC format
-	// and separated from each other by commas (,).
-	StartTime string `json:"start_time"`
-	//Backup interva
-	Frequency int `json:"frequency"`
-	//Number of retained backups
-	RententionNum int `json:"rentention_num"`
-	//Whether to retain the first backup in the current month
-	RemainFirstBackup string `json:"remain_first_backup_of_curMonth"`
-	//Backup policy status
-	Status string `json:"status"`
-}
-
-type Resources struct {
-	//List of successfully associated/disassociated resources
-	SuccessResources []ResultResources `json:"success_resources"`
-	//List of the resources that fail to be associated/disassociated
-	FailResources []ResultResources `json:"fail_resources"`
-}
-
 type ResultResources struct {
+	//List of successfully associated/disassociated resources
+	SuccessResources []Resource `json:"success_resources"`
+	//List of the resources that fail to be associated/disassociated
+	FailResources []Resource `json:"fail_resources"`
+}
+
+type Resource struct {
 	//Resource ID
 	ResourceID string `json:"resource_id"`
 	//Resource type
 	ResourceType string `json:"resource_type"`
 	//Availability zone to which the resource belongs
-	Az string `json:"availability_zone"`
+	AvailabilityZone string `json:"availability_zone"`
 	//POD to which the resource belongs
-	OSVolume string `json:"os_vol_host_attr"`
+	Pod string `json:"os_vol_host_attr"`
 }
 
 type commonResult struct {
@@ -113,9 +99,9 @@ func ExtractPolicies(r pagination.Page) ([]Policy, error) {
 	return s.Policies, err
 }
 
-// Extract will get the Association/disassociation of resources from the commonResult
-func (r ResourceResult) ExtractResource() (*Resources, error) {
-	var response Resources
+// ExtractResource will get the Association/disassociation of resources from the ResourceResult
+func (r ResourceResult) ExtractResource() (*ResultResources, error) {
+	var response ResultResources
 	err := r.ExtractInto(&response)
 	return &response, err
 }

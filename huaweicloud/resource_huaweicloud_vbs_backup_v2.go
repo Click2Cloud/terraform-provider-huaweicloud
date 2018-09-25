@@ -117,12 +117,12 @@ func resourceVBSBackupV2() *schema.Resource {
 	}
 }
 
-func resourceVBSBackupTagsV2(d *schema.ResourceData) []backups.Tags {
+func resourceVBSBackupTagsV2(d *schema.ResourceData) []backups.Tag {
 	rawTags := d.Get("tags").([]interface{})
-	tags := make([]backups.Tags, len(rawTags))
+	tags := make([]backups.Tag, len(rawTags))
 	for i, raw := range rawTags {
 		rawMap := raw.(map[string]interface{})
-		tags[i] = backups.Tags{
+		tags[i] = backups.Tag{
 			Key:   rawMap["key"].(string),
 			Value: rawMap["value"].(string),
 		}
@@ -188,7 +188,7 @@ func resourceVBSBackupV2Read(d *schema.ResourceData, meta interface{}) error {
 	d.Set("description", n.Description)
 	d.Set("incremental", n.Incremental)
 	d.Set("status", n.Status)
-	d.Set("availability_zone", n.AZ)
+	d.Set("availability_zone", n.AvailabilityZone)
 	d.Set("snapshot_id", n.SnapshotId)
 	d.Set("service_metadata", n.ServiceMetadata)
 	d.Set("size", n.Size)
