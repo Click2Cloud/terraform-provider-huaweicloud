@@ -60,10 +60,6 @@ func resourceVBSBackupV2() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"incremental": &schema.Schema{
-				Type:     schema.TypeBool,
-				Computed: true,
-			},
 			"status": &schema.Schema{
 				Type:     schema.TypeString,
 				Computed: true,
@@ -186,7 +182,6 @@ func resourceVBSBackupV2Read(d *schema.ResourceData, meta interface{}) error {
 	d.Set("id", n.Id)
 	d.Set("name", n.Name)
 	d.Set("description", n.Description)
-	d.Set("incremental", n.Incremental)
 	d.Set("status", n.Status)
 	d.Set("availability_zone", n.AvailabilityZone)
 	d.Set("snapshot_id", n.SnapshotId)

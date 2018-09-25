@@ -49,8 +49,6 @@ In addition to all arguments above, the following attributes are exported:
 
 * `container` - The container of the backup.
 
-* `incremental` - Whether the backup is an incremental backup.
-
 * `status` - The status of the VBS backup.
 
 * `availability_zone` - The AZ where the backup resides.
@@ -69,6 +67,7 @@ In addition to all arguments above, the following attributes are exported:
 # Import
 
 VBS Backup can be imported using the `backup id`, e.g.
+
 ```
- $ terraform import huaweicloud_vbs_backup_v2 4779ab1c-7c1a-44b1-a02e-93dfc361b32d
+ $ terraform import huaweicloud_vbs_backup_v2.mybackup 4779ab1c-7c1a-44b1-a02e-93dfc361b32d
 ```

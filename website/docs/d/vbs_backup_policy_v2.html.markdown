@@ -38,7 +38,9 @@ The given filters must match exactly one VBS backup policy whose data will be ex
 * `status` (Optional) - The status of the specific VBS backup policy to retrieve. The values can be ON or OFF
 
 **filter_tags** **- (Optional)** Represents the list of tags. Backup policy with these tags will be filtered.
+
 * `key` - (Required) Specifies the tag key. Tag keys must be unique.
+
 * `values` - (Required) Specifies the List of tag values. This list can have a maximum of 10 values and all be unique.
 
 
@@ -62,5 +64,7 @@ The following attributes are exported:
 * `frequency` - Specifies the backup interval. The value is in the range of 1 to 14 days.
 
 **tags** - Represents the list of tag details associated with the backup policy.
+
 * `key` - Specifies the tag key. 
+
 * `value` - Specifies the tag value. 

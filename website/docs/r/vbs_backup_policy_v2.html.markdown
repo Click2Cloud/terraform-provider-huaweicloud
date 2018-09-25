@@ -45,7 +45,9 @@ The following arguments are supported:
 * `frequency` (Optional) - Specifies the backup interval. The value is in the range of 1 to 14 days.
 
 **tags** **- (Optional)** Represents the list of tags to be configured for the backup policy.
+
 * `key` - (Required) Specifies the tag key. A tag key consists of up to 36 characters, chosen from letters, digits, hyphens (-), and underscores (_).
+
 * `value` - (Required) Specifies the tag value. A tag value consists of 0 to 43 characters, chosen from letters, digits, hyphens (-), and underscores (_).
 
 
@@ -63,5 +65,5 @@ result attributes:
 Backup Policy can be imported using the `id`, e.g.
 
 ```
-$ terraform import huaweicloud_vbs_backup_policy_v2 4779ab1c-7c1a-44b1-a02e-93dfc361b32d
+$ terraform import huaweicloud_vbs_backup_policy_v2.vbs 4779ab1c-7c1a-44b1-a02e-93dfc361b32d
 ```
