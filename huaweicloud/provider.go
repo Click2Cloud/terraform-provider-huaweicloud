@@ -210,7 +210,7 @@ func Provider() terraform.ResourceProvider {
 			"huaweicloud_vpc_subnet_ids_v1":         dataSourceVpcSubnetIdsV1(),
 			"huaweicloud_rts_software_config_v1":    dataSourceRtsSoftwareConfigV1(),
 			"huaweicloud_vbs_backup_policy_v2":      dataSourceVBSBackupPolicyV2(),
-			"opentelekomcloud_vbs_backup_v2":        dataSourceVBSBackupV2(),
+			"huaweicloud_vbs_backup_v2":             dataSourceVBSBackupV2(),
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
