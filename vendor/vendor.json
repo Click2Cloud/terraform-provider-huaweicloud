@@ -572,10 +572,10 @@
 			"revisionTime": "2018-09-11T07:04:38Z"
 		},
 		{
-			"checksumSHA1": "Xucq+Ue/IefP4qrReitCN5F3rRg=",
+			"checksumSHA1": "YzmBBe+FbrOB+Sj6HM1LVZyXBk8=",
 			"path": "github.com/huaweicloud/golangsdk/openstack/blockstorage/v2/volumes",
-			"revision": "f08a3288280dde5efc7e934854f4f920c99a8534",
-			"revisionTime": "2018-09-17T05:36:38Z"
+			"revision": "c944366e486958143ac71ef0f228cb157f2eb45b",
+			"revisionTime": "2018-09-28T06:49:54Z"
 		},
 		{
 			"checksumSHA1": "q1aqMo0piceUY8M6d6xzbL1mgdo=",
