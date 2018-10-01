@@ -53,7 +53,7 @@ func dataSourceVBSBackupPolicyV2() *schema.Resource {
 				Computed: true,
 			},
 			"tags": &schema.Schema{
-				Type:     schema.TypeList,
+				Type:     schema.TypeSet,
 				Computed: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -69,7 +69,7 @@ func dataSourceVBSBackupPolicyV2() *schema.Resource {
 				},
 			},
 			"filter_tags": &schema.Schema{
-				Type:     schema.TypeList,
+				Type:     schema.TypeSet,
 				Optional: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -95,7 +95,7 @@ func dataSourceVBSPolicyV2Read(d *schema.ResourceData, meta interface{}) error {
 	vbsClient, err := config.vbsV2Client(GetRegion(d, config))
 
 	policyID := d.Get("id").(string)
-	rawTags := d.Get("filter_tags").([]interface{})
+	rawTags := d.Get("filter_tags").(*schema.Set).List()
 	if len(rawTags) > 0 {
 		tagsOpts := tags.ListOpts{Action: "filter", Tags: getVBSFilterTagsV2(d)}
 		querytags, err := tags.ListResources(vbsClient, tagsOpts).ExtractResources()
@@ -163,7 +163,7 @@ func dataSourceVBSPolicyV2Read(d *schema.ResourceData, meta interface{}) error {
 }
 
 func getVBSFilterTagsV2(d *schema.ResourceData) []tags.Tags {
-	rawTags := d.Get("filter_tags").([]interface{})
+	rawTags := d.Get("filter_tags").(*schema.Set).List()
 	filterTags := make([]tags.Tags, len(rawTags))
 	for i, raw := range rawTags {
 		rawMap := raw.(map[string]interface{})

@@ -34,8 +34,8 @@ func resourceVBSBackupV2() *schema.Resource {
 			},
 			"name": &schema.Schema{
 				Type:         schema.TypeString,
-				Required: true,
-				ForceNew: true,
+				Required:     true,
+				ForceNew:     true,
 				ValidateFunc: validateVBSBackupName,
 			},
 			"volume_id": &schema.Schema{
@@ -53,7 +53,6 @@ func resourceVBSBackupV2() *schema.Resource {
 				Type:         schema.TypeString,
 				Optional:     true,
 				ForceNew:     true,
-				Computed:     true,
 				ValidateFunc: validateVBSBackupDescription,
 			},
 			"container": &schema.Schema{
@@ -68,20 +67,8 @@ func resourceVBSBackupV2() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"fail_reason": &schema.Schema{
-				Type:     schema.TypeString,
-				Computed: true,
-			},
 			"size": &schema.Schema{
 				Type:     schema.TypeInt,
-				Computed: true,
-			},
-			"object_count": &schema.Schema{
-				Type:     schema.TypeInt,
-				Computed: true,
-			},
-			"tenant_id": &schema.Schema{
-				Type:     schema.TypeString,
 				Computed: true,
 			},
 			"service_metadata": &schema.Schema{
@@ -89,7 +76,7 @@ func resourceVBSBackupV2() *schema.Resource {
 				Computed: true,
 			},
 			"tags": &schema.Schema{
-				Type:     schema.TypeList,
+				Type:     schema.TypeSet,
 				Optional: true,
 				ForceNew: true,
 				Elem: &schema.Resource{
@@ -114,7 +101,7 @@ func resourceVBSBackupV2() *schema.Resource {
 }
 
 func resourceVBSBackupTagsV2(d *schema.ResourceData) []backups.Tag {
-	rawTags := d.Get("tags").([]interface{})
+	rawTags := d.Get("tags").(*schema.Set).List()
 	tags := make([]backups.Tag, len(rawTags))
 	for i, raw := range rawTags {
 		rawMap := raw.(map[string]interface{})
@@ -179,7 +166,6 @@ func resourceVBSBackupV2Read(d *schema.ResourceData, meta interface{}) error {
 		return fmt.Errorf("Error retrieving huaweicloud VBS Backup: %s", err)
 	}
 
-	d.Set("id", n.Id)
 	d.Set("name", n.Name)
 	d.Set("description", n.Description)
 	d.Set("status", n.Status)
@@ -187,10 +173,7 @@ func resourceVBSBackupV2Read(d *schema.ResourceData, meta interface{}) error {
 	d.Set("snapshot_id", n.SnapshotId)
 	d.Set("service_metadata", n.ServiceMetadata)
 	d.Set("size", n.Size)
-	d.Set("fail_reason", n.FailReason)
 	d.Set("container", n.Container)
-	d.Set("tenant_id", n.TenantId)
-	d.Set("object_count", n.ObjectCount)
 	d.Set("volume_id", n.VolumeId)
 	d.Set("region", GetRegion(d, config))
 
@@ -246,4 +229,3 @@ func waitForBackupDelete(client *golangsdk.ServiceClient, backupID string) resou
 		return r, r.Status, nil
 	}
 }
-
