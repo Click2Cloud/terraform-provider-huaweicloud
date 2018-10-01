@@ -59,13 +59,13 @@ func testAccPreCheckRequiredEnvVars(t *testing.T) {
 		t.Fatal("OS_AVAILABILITY_ZONE must be set for acceptance tests")
 	}
 
-	if OS_ACCESS_KEY == "" {
+	/*if OS_ACCESS_KEY == "" {
 		t.Fatal("OS_ACCESS_KEY must be set for acceptance tests")
 	}
 
 	if OS_SECRET_KEY == "" {
 		t.Fatal("OS_SECRET_KEY must be set for acceptance tests")
-	}
+	}*/
 	if OS_FLAVOR_ID == "" && OS_FLAVOR_NAME == "" {
 		t.Fatal("OS_FLAVOR_ID or OS_FLAVOR_NAME must be set for acceptance tests")
 	}
