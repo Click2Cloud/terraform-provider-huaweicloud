@@ -82,6 +82,7 @@ func newhwClient(c *Config) error {
 	if c.AccessKey != "" && c.SecretKey != "" {
 		ao = golangsdk.AKSKAuthOptions{
 			IdentityEndpoint: c.IdentityEndpoint,
+			ProjectName:      c.TenantName,
 			ProjectId:        c.TenantID,
 			Region:           c.Region,
 			//			Domain:           c.DomainName,
@@ -433,6 +434,13 @@ func (c *Config) networkingHwV2Client(region string) (*golangsdk.ServiceClient, 
 
 func (c *Config) autoscalingV1Client(region string) (*golangsdk.ServiceClient, error) {
 	return huaweisdk.NewAutoScalingService(c.HwClient, golangsdk.EndpointOpts{
+		Region:       c.determineRegion(region),
+		Availability: c.getHwEndpointType(),
+	})
+}
+
+func (c *Config) dmsV1Client(region string) (*golangsdk.ServiceClient, error) {
+	return huaweisdk.NewDMSServiceV1(c.HwClient, golangsdk.EndpointOpts{
 		Region:       c.determineRegion(region),
 		Availability: c.getHwEndpointType(),
 	})
