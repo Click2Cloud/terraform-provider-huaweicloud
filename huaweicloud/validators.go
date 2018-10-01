@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"net"
 	"regexp"
-	"time"
 	"strings"
+	"time"
 )
 
 func ValidateStringList(v interface{}, k string, l []string) (ws []string, errors []error) {
@@ -274,4 +274,3 @@ func validateVBSBackupDescription(v interface{}, k string) (ws []string, errors 
 	}
 	return
 }
-
