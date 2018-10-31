@@ -50,6 +50,7 @@ func resourceCCENodeV3() *schema.Resource {
 				Type:     schema.TypeMap,
 				Optional: true,
 				ForceNew: true,
+				Computed: true,
 			},
 			"flavor": &schema.Schema{
 				Type:     schema.TypeString,

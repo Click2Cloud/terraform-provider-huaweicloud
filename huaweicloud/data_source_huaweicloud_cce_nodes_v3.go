@@ -2,9 +2,10 @@ package huaweicloud
 
 import (
 	"fmt"
+	"log"
+
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/huaweicloud/golangsdk/openstack/cce/v3/nodes"
-	"log"
 )
 
 func dataSourceCceNodesV3() *schema.Resource {
