@@ -225,7 +225,7 @@ resource "huaweicloud_cce_node_v3" "node_1" {
   ]
 timeouts {
 create = "10m"
-delete = "5m"
+delete = "10m"
 } 
 }
 `, OS_VPC_ID, OS_SUBNET_ID, OS_AVAILABILITY_ZONE, OS_SSH_KEY)
