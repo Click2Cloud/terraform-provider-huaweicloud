@@ -212,6 +212,7 @@ func Provider() terraform.ResourceProvider {
 			"huaweicloud_dms_az_v1":                 dataSourceDmsAZV1(),
 			"huaweicloud_dms_product_v1":            dataSourceDmsProductV1(),
 			"huaweicloud_dms_maintainwindow_v1":     dataSourceDmsMaintainWindowV1(),
+			"huaweicloud_antiddos_v1":               dataSourceAntiDdosV1(),
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
