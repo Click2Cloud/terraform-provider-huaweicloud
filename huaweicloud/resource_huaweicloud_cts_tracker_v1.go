@@ -47,9 +47,10 @@ func resourceCTSTrackerV1() *schema.Resource {
 				Required: true,
 			},
 			"file_prefix_name": &schema.Schema{
-				Type:     schema.TypeString,
-				Optional: true,
-				Computed: true,
+				Type:         schema.TypeString,
+				Optional:     true,
+				Computed:     true,
+				ValidateFunc: validateName,
 			},
 			"is_support_smn": &schema.Schema{
 				Type:     schema.TypeBool,
