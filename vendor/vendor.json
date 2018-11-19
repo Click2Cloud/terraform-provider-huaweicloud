@@ -548,10 +548,10 @@
 			"revisionTime": "2018-09-21T05:59:28Z"
 		},
 		{
-			"checksumSHA1": "Nj9QtIBJtdMrysTBt+Pk/Quxwic=",
+			"checksumSHA1": "HVR9NEEAzULt23DLXM3jXxEN4AI=",
 			"path": "github.com/huaweicloud/golangsdk/openstack/antiddos/v1/antiddos",
-			"revision": "02410251e11d8f02f17fb26f55ce02f4f3bcc3c3",
-			"revisionTime": "2018-10-26T07:29:42Z"
+			"revision": "7ba97510c1dbaa26ec19b8078308488b4253b068",
+			"revisionTime": "2018-11-16T08:37:32Z"
 		},
 		{
 			"checksumSHA1": "/2W0SIigiurtg1dW3Pyz+x4F24k=",
@@ -754,8 +754,8 @@
 		{
 			"checksumSHA1": "JRRYtYkrco9209oThCcF5MEPIII=",
 			"path": "github.com/huaweicloud/golangsdk/openstack/kms/v1/keys",
-			"revision": "824aea0ed0decd7a36623f49b1610e7af6c58c3c",
-			"revisionTime": "2018-09-28T03:11:13Z"
+			"revision": "7ba97510c1dbaa26ec19b8078308488b4253b068",
+			"revisionTime": "2018-11-16T08:37:32Z"
 		},
 		{
 			"checksumSHA1": "S03meuz/zX857hIqfpgyCUfrcFs=",
