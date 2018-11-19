@@ -17,8 +17,7 @@ func TestAccAntiDdosV1DataSource_basic(t *testing.T) {
 				Config: testAccAntiDdosV1DataSource_basic,
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckAntiDdosV1DataSourceID("data.huaweicloud_antiddos_v1.antiddos"),
-					resource.TestCheckResourceAttr("data.huaweicloud_antiddos_v1.antiddos", "network_type", "EIP"),
-					resource.TestCheckResourceAttr("data.huaweicloud_antiddos_v1.antiddos", "status", "normal"),
+					resource.TestCheckResourceAttr("data.huaweicloud_antiddos_v1.antiddos", "floating_ip_id", OS_EIP_ID),
 				),
 			},
 		},
