@@ -30,6 +30,7 @@ var (
 	OS_TENANT_ID              = os.Getenv("OS_TENANT_ID")
 	OS_ULB_ENVIRONMENT        = os.Getenv("OS_ULB_ENVIRONMENT")
 	OS_SSH_KEY                = os.Getenv("OS_SSH_KEY")
+	OS_EIP_ID                 = os.Getenv("OS_EIP_ID")
 )
 
 var testAccProviders map[string]terraform.ResourceProvider
@@ -310,5 +311,12 @@ func testAccAsConfigPreCheck(t *testing.T) {
 	testAccPreCheckRequiredEnvVars(t)
 	if OS_FLAVOR_ID == "" {
 		t.Skip("OS_FLAVOR_ID must be set for acceptance tests")
+	}
+}
+
+func testAccPreCheckAntiddos(t *testing.T) {
+	testAccPreCheckRequiredEnvVars(t)
+	if OS_EIP_ID == "" {
+		t.Skip("OS_EIP_ID must be set for acceptance tests")
 	}
 }

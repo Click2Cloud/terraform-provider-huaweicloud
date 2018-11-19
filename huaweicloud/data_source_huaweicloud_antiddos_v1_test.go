@@ -10,7 +10,7 @@ import (
 
 func TestAccAntiDdosV1DataSource_basic(t *testing.T) {
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:  func() { testAccPreCheckAntiddos(t) },
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			resource.TestStep{
@@ -40,20 +40,8 @@ func testAccCheckAntiDdosV1DataSourceID(n string) resource.TestCheckFunc {
 	}
 }
 
-const testAccAntiDdosV1DataSource_basic = `
-resource "huaweicloud_vpc_eip_v1" "eip_1" {
-  publicip {
-    type = "5_bgp"
-  }
-  bandwidth {
-    name = "test"
-    size = 8
-    share_type = "PER"
-    charge_mode = "traffic"
-  }
-}
-
+var testAccAntiDdosV1DataSource_basic = fmt.Sprintf(`
 data "huaweicloud_antiddos_v1" "antiddos" {  
-  floating_ip_id = "${huaweicloud_vpc_eip_v1.eip_1.id}"
+  floating_ip_id = "%s"
 }
-`
+`, OS_EIP_ID)
